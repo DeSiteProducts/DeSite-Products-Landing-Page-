@@ -1,6 +1,92 @@
 @import "tailwindcss";
 
-body {
-  margin: 0;
-  font-family: Arial, Helvetica, sans-serif;
+@theme {
+  /* DeSite palette */
+  --color-navy: #052356;
+  --color-brand: #38B6FF;
+  --color-ink: #0A0A0A;
+  --color-graphite: #252525;
+
+  --color-navy-950: #02122d;
+  --color-navy-900: #041a41;
+  --color-navy-800: #052356;
+  --color-navy-700: #0a3178;
+  --color-brand-600: #1d9ae6;
+  --color-brand-300: #7fcfff;
+  --color-brand-100: #d6f0ff;
+
+  --font-sans: "Inter", ui-sans-serif, system-ui, -apple-system, "Segoe UI",
+    Roboto, Helvetica, Arial, sans-serif;
+  --font-display: "Archivo", "Inter", ui-sans-serif, system-ui, -apple-system,
+    "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+
+  --animate-marquee: marquee 32s linear infinite;
+  --animate-rise: rise 0.7s cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+
+@keyframes marquee {
+  from { transform: translateX(0); }
+  to { transform: translateX(-50%); }
+}
+
+@keyframes rise {
+  from { opacity: 0; transform: translateY(18px); }
+  to { opacity: 1; transform: none; }
+}
+
+@layer base {
+  html {
+    /* La audiencia es de baja visión: 19px de base en lugar de 16px.
+       Todas las utilidades de Tailwind son rem, así que escala el sitio entero. */
+    font-size: 118.75%;
+    scroll-behavior: smooth;
+    scroll-padding-top: 5.5rem;
+    -webkit-text-size-adjust: 100%;
+  }
+
+  body {
+    margin: 0;
+    background-color: var(--color-ink);
+    color: var(--color-white);
+    font-family: var(--font-sans);
+    -webkit-font-smoothing: antialiased;
+  }
+
+  ::selection {
+    background-color: var(--color-brand);
+    color: var(--color-navy);
+  }
+
+  :focus-visible {
+    outline: 2px solid var(--color-brand);
+    outline-offset: 3px;
+    border-radius: 4px;
+  }
+}
+
+@layer components {
+  /* Technical grid backdrop for dark sections */
+  .grid-tech {
+    background-image:
+      linear-gradient(to right, rgba(56, 182, 255, 0.07) 1px, transparent 1px),
+      linear-gradient(to bottom, rgba(56, 182, 255, 0.07) 1px, transparent 1px);
+    background-size: 64px 64px;
+  }
+
+  .hatch {
+    background-image: repeating-linear-gradient(
+      45deg,
+      rgba(56, 182, 255, 0.16) 0 2px,
+      transparent 2px 9px
+    );
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html { scroll-behavior: auto; }
+  *, *::before, *::after {
+    animation-duration: 0.001ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.001ms !important;
+  }
 }
