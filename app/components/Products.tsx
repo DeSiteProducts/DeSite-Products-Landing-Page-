@@ -56,6 +56,11 @@ export default function Products() {
                         </dt>
                         <dd className="mt-1 whitespace-nowrap font-display text-2xl font-extrabold text-white sm:text-3xl">
                           {spec.value}
+                          {spec.unit ? (
+                            <span className="ml-1 text-base font-bold text-white/50">
+                              {spec.unit}
+                            </span>
+                          ) : null}
                         </dd>
                       </div>
                     ))}
@@ -111,6 +116,7 @@ export default function Products() {
                   <EquipmentRow
                     title="Designed For Mini Equipment"
                     machines={miniEquipment}
+                    zoom={2.4}
                   />
                 )}
 

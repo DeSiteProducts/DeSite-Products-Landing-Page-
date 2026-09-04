@@ -11,7 +11,8 @@ export type Screener = {
   image: string;
   imageAlt: string;
   highlights: string[];
-  specs: { label: string; value: string }[];
+  /** `unit` renders small next to the value (e.g. 6 × 10 ft). */
+  specs: { label: string; value: string; unit?: string }[];
   bestFor: string[];
 };
 
@@ -47,7 +48,7 @@ export const screeners: Screener[] = [
     ],
     specs: [
       { label: "Production (yd³/hr)", value: "50–80" },
-      { label: "Screen deck (ft)", value: "6 × 10" },
+      { label: "Screen deck", value: "6 × 10", unit: "ft" },
       { label: "Weight (lb)", value: "4,300" },
     ],
     bestFor: materials,
@@ -68,7 +69,7 @@ export const screeners: Screener[] = [
     ],
     specs: [
       { label: "Production (yd³/hr)", value: "30–50" },
-      { label: "Screen deck (sq ft)", value: "29" },
+      { label: "Screen deck", value: "4 × 7", unit: "ft" },
       { label: "Weight (lb)", value: "1,750" },
     ],
     bestFor: materials,
@@ -88,7 +89,7 @@ export const screeners: Screener[] = [
     ],
     specs: [
       { label: "Production (yd³/hr)", value: "5–10" },
-      { label: "Screen deck (sq ft)", value: "33" },
+      { label: "Screen deck", value: "4 × 5", unit: "ft" },
       { label: "Weight (lb)", value: "882" },
     ],
     bestFor: [
@@ -119,7 +120,7 @@ export const comparisonRows: { label: string; values: [string, string, string] }
       "C spring",
     ],
   },
-  { label: "Screen deck", values: ["6 × 10 ft (58 sq ft)", "29 sq ft (80 × 52 in)", "33 sq ft (63 × 66 in)"] },
+  { label: "Screen deck", values: ["6 × 10 ft", "4 × 7 ft", "4 × 5 ft"] },
   { label: "Deck tilt angle", values: ["45° to 30°", "45° to 30°", "45° to 30°"] },
   { label: "Machine width × height", values: ["126 × 122 in", "95 × 90 in", "74 × 61.4 in"] },
   { label: "Total weight", values: ["4,300 lb (5,500 with riser box)", "1,750 lb (2,250 with riser box)", "882 lb"] },

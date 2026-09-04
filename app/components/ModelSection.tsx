@@ -55,6 +55,9 @@ export default function ModelSection({
                   <dt className="text-xs uppercase tracking-wider text-white/40">{s.label}</dt>
                   <dd className="mt-0.5 font-display text-3xl font-extrabold text-white">
                     {s.value}
+                    {s.unit ? (
+                      <span className="ml-1 text-base font-bold text-white/50">{s.unit}</span>
+                    ) : null}
                   </dd>
                 </div>
               ))}

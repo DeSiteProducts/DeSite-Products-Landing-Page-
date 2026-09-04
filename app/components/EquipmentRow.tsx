@@ -7,13 +7,19 @@ import type { Machine } from "../data/equipment";
  * SLG 56 cannot end up drawn larger than a 24-tonne excavator on the SLG 108.
  * Each image fills a share of its slot, and that share is the machine's size
  * relative to the biggest one, which keeps the line-up to scale.
+ *
+ * `zoom` enlarges a whole row at once. The mini row needs it: measured against
+ * the same reference as the others its machines come out too small to read, and
+ * enlarging the row keeps every machine in it in proportion to the rest.
  */
 export default function EquipmentRow({
   title,
   machines,
+  zoom = 1,
 }: {
   title: string;
   machines: Machine[];
+  zoom?: number;
 }) {
   return (
     <div className="border-t border-white/10 px-6 py-6 md:col-span-2 lg:col-span-3 lg:px-8">
@@ -32,7 +38,7 @@ export default function EquipmentRow({
               src={m.image}
               alt={m.name}
               className="h-auto"
-              style={{ width: `${m.scale * 100}%` }}
+              style={{ width: `${Math.min(m.scale * zoom, 1) * 100}%` }}
             />
           </li>
         ))}
