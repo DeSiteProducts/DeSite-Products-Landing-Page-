@@ -50,6 +50,7 @@ export default function Difference() {
             >
               <PhotoGallery
                 photos={d.images ?? []}
+                eager={i === 0}
                 fallback={
                   <div className="flex h-full items-center justify-center bg-gradient-to-br from-navy-800/50 via-navy-950 to-ink p-6 lg:p-8">
                     <Artwork art={d.art} />

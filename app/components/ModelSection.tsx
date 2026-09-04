@@ -1,4 +1,6 @@
+import Image from "next/image";
 import { comparisonRows, screeners, type Screener } from "../data/products";
+import { CURRENCIES, formatPrice, type Currency } from "../lib/currency";
 import { videos } from "../data/videos";
 import VideoCard from "./VideoCard";
 import { IconArrowRight, IconCheck, IconPhone } from "./Icons";
@@ -16,9 +18,11 @@ const artVariant = {
  */
 export default function ModelSection({
   model,
+  currency,
   tone = "dark",
 }: {
   model: Screener;
+  currency: Currency;
   tone?: "dark" | "darker";
 }) {
   const index = screeners.findIndex((s) => s.slug === model.slug);
@@ -66,9 +70,9 @@ export default function ModelSection({
             <div className="mt-10 border-t border-white/10 pt-8">
               <p className="text-xs uppercase tracking-[0.18em] text-white/40">Price</p>
               <p className="mt-1 font-display text-4xl font-extrabold leading-none text-white">
-                {model.price}
+                {formatPrice(model.prices[currency], currency)}
                 <span className="ml-2 align-middle text-xs font-bold text-white/40">
-                  USD, before freight
+                  {CURRENCIES[currency].note}
                 </span>
               </p>
             </div>
@@ -92,8 +96,16 @@ export default function ModelSection({
           </div>
 
           <div className="rounded-3xl border border-white/10 bg-gradient-to-br from-navy-800/50 via-navy-950 to-ink p-6 lg:p-10">
-            {/* eslint-disable-next-line @next/next/no-img-element */}
-            <img src={model.image} alt={model.imageAlt} className="w-full" />
+            <Image
+              src={model.image}
+              alt={model.imageAlt}
+              width={900}
+              height={900}
+              sizes="(min-width: 1024px) 40vw, 100vw"
+              quality={80}
+              loading="lazy"
+              className="h-auto w-full"
+            />
           </div>
         </div>
 
@@ -155,9 +167,6 @@ export default function ModelSection({
               </div>
             ))}
           </dl>
-          <p className="mt-5 text-base text-white/40">
-            Manufacturer figures. Confirm in writing at the point of quotation.
-          </p>
         </div>
       </div>
     </section>

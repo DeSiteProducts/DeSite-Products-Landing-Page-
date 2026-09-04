@@ -9,7 +9,7 @@ export default function Hero() {
     >
       <BackgroundVideo
         vimeoId="1223412221"
-        poster="https://i.vimeocdn.com/video/2196623384-b2679a9954695ba7e86237c47e511b3824d356b0d293f0431f15552dcae40371-d_1280"
+        poster="/images/hero-poster.jpg"
       />
 
       <div className="relative mx-auto w-full max-w-7xl px-5 lg:px-8">

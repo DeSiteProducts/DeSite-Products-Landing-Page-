@@ -1,3 +1,5 @@
+import type { Currency } from "../lib/currency";
+
 export type Screener = {
   slug: string;
   name: string;
@@ -5,8 +7,11 @@ export type Screener = {
   family: string;
   badge?: string;
   featured?: boolean;
-  /** List price, before freight and tax. */
-  price: string;
+  /**
+   * List price per currency, before freight and tax. Which one is shown is
+   * decided from the visitor's country — see `app/lib/currency.ts`.
+   */
+  prices: Record<Currency, number>;
   /** Product photograph on a transparent background. */
   image: string;
   imageAlt: string;
@@ -39,7 +44,7 @@ export const screeners: Screener[] = [
     imageAlt: "DeSite SLG 108 screener with its galvanised riser box and tilting mesh deck.",
     name: "SLG 108",
     family: "Full-size equipment",
-    price: "$14,900",
+    prices: { USD: 14900, CAD: 14500 },
     highlights: [
       "Tilting deck adjusts from 45° to 30°",
       "Takes buckets from 84 to 108 in",
@@ -59,7 +64,7 @@ export const screeners: Screener[] = [
     imageAlt: "DeSite SLG 78 screener with fork pockets and a tilting mesh deck.",
     name: "SLG 78",
     family: "Compact equipment",
-    price: "$7,900",
+    prices: { USD: 7900, CAD: 8500 },
     featured: true,
     highlights: [
       "Tilting deck adjusts from 45° to 30°",
@@ -80,7 +85,7 @@ export const screeners: Screener[] = [
     imageAlt: "DeSite SLG 56 mini screener on its removable wheels and tow hitch.",
     name: "SLG 56",
     family: "Mini equipment",
-    price: "$4,500",
+    prices: { USD: 4500, CAD: 4700 },
     highlights: [
       "Tilting deck adjusts from 45° to 30°",
       "C spring suspension with rubber deck skirts",

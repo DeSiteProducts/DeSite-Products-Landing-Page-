@@ -1,5 +1,6 @@
 "use client";
 
+import Image from "next/image";
 import { useState } from "react";
 import type { VideoItem } from "../data/videos";
 import ScreenerArt from "./ScreenerArt";
@@ -40,13 +41,15 @@ export default function VideoCard({ video, featured }: { video: VideoItem; featu
               <ScreenerArt variant={video.model} className="h-full w-full" />
             </div>
             {video.thumb && !thumbFailed && (
-              // eslint-disable-next-line @next/next/no-img-element
-              <img
+              <Image
                 src={video.thumb}
                 alt=""
+                fill
+                sizes={featured ? "(min-width: 1024px) 50vw, 100vw" : "(min-width: 1024px) 25vw, (min-width: 640px) 50vw, 100vw"}
+                quality={70}
                 loading="lazy"
                 onError={() => setThumbFailed(true)}
-                className="absolute inset-0 h-full w-full object-cover transition-transform duration-500 group-hover:scale-105"
+                className="object-cover transition-transform duration-500 group-hover:scale-105"
               />
             )}
             <div className="absolute inset-0 bg-gradient-to-t from-navy-950 via-navy-950/30 to-navy-950/10" />

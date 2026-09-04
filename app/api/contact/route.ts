@@ -1,4 +1,10 @@
 import { NextResponse } from "next/server";
+import {
+  COUNTRY_HEADER,
+  CURRENCY_HEADER,
+  DEFAULT_CURRENCY,
+  parseCurrency,
+} from "../../lib/currency";
 
 export const runtime = "nodejs";
 
@@ -10,6 +16,8 @@ type Payload = {
   zip?: string;
   /** Model the qualification answers point to. */
   model?: string;
+  /** Currency the visitor was shown, so we quote them in the same one. */
+  currency?: string;
   message?: string;
   /** Qualification answers, keyed by question id. */
   answers?: Record<string, string>;
@@ -59,6 +67,14 @@ export async function POST(request: Request) {
     ([key, value]) => `  ${labels[key] ?? key}: ${value}`
   );
 
+  // The proxy resolves this from the country the request came from. The posted
+  // value is only a fallback, since anything in the body is client-supplied.
+  const currency =
+    parseCurrency(request.headers.get(CURRENCY_HEADER)) ??
+    parseCurrency(data.currency) ??
+    DEFAULT_CURRENCY;
+  const country = request.headers.get(COUNTRY_HEADER);
+
   const lines = [
     `Name:     ${data.name}`,
     `Company:  ${data.company || "—"}`,
@@ -66,6 +82,7 @@ export async function POST(request: Request) {
     `Phone:    ${data.phone || "—"}`,
     `ZIP:      ${data.zip || "—"}`,
     `Model:    ${data.model}`,
+    `Currency: ${currency}${country ? ` (request from ${country})` : ""}`,
     "",
     "Qualification:",
     ...(qualification.length ? qualification : ["  (no answers)"]),
@@ -96,7 +113,7 @@ export async function POST(request: Request) {
       from: CONTACT_FROM || SMTP_USER,
       to: CONTACT_TO,
       replyTo: data.email,
-      subject: `Quote request — ${data.model} — ${data.name}${data.company ? ` (${data.company})` : ""}`,
+      subject: `Quote request (${currency}) — ${data.model} — ${data.name}${data.company ? ` (${data.company})` : ""}`,
       text: lines,
     });
 

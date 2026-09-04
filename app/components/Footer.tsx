@@ -1,5 +1,5 @@
 import Logo from "./Logo";
-import { IconPhone, IconPin } from "./Icons";
+import { IconPhone } from "./Icons";
 
 const columns = [
   {
@@ -27,10 +27,6 @@ export default function Footer() {
         <div className="grid gap-12 lg:grid-cols-[1.4fr_1fr_1fr_1.2fr]">
           <div>
             <Logo />
-            <p className="mt-5 max-w-xs text-base leading-relaxed text-white/55">
-              Bucket-fed topsoil and rock screeners for landscaping, aggregate
-              yards and site contractors.
-            </p>
           </div>
 
           {columns.map((col) => (
@@ -67,20 +63,13 @@ export default function Footer() {
                   806-500-3915
                 </a>
               </li>
-              <li className="flex items-start gap-2.5">
-                <IconPin className="mt-0.5 h-4 w-4 shrink-0 text-brand" />
-                FM 1490, Levelland, TX
-              </li>
             </ul>
           </div>
         </div>
 
-        <div className="mt-14 flex flex-col gap-4 border-t border-white/10 pt-8 sm:flex-row sm:items-center sm:justify-between">
+        <div className="mt-14 border-t border-white/10 pt-8">
           <p className="text-sm text-white/40">
             © {new Date().getFullYear()} DeSite Products. All rights reserved.
-          </p>
-          <p className="text-sm text-white/40">
-            Specifications are subject to change without notice.
           </p>
         </div>
       </div>

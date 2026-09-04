@@ -1,5 +1,6 @@
 "use client";
 
+import Image from "next/image";
 import { useState, type ReactNode } from "react";
 
 type Photo = { src: string; alt: string };
@@ -12,10 +13,13 @@ type Photo = { src: string; alt: string };
 export default function PhotoGallery({
   photos,
   fallback,
+  eager = false,
 }: {
   photos: Photo[];
   /** Shown as the only slide while this difference has no photographs yet. */
   fallback?: ReactNode;
+  /** Set on the gallery nearest the fold so its first slide is not deferred. */
+  eager?: boolean;
 }) {
   const [index, setIndex] = useState(0);
   const many = photos.length > 1;
@@ -29,13 +33,20 @@ export default function PhotoGallery({
       {photos.length === 0 && fallback}
 
       {photos.map((p, i) => (
-        // eslint-disable-next-line @next/next/no-img-element
-        <img
+        <Image
           key={p.src}
           src={p.src}
           alt={p.alt}
+          fill
+          // Half the grid on desktop, capped at what the container can ever
+          // be (max-w-7xl split in two), the full width below it.
+          sizes="(min-width: 1536px) 760px, (min-width: 768px) 50vw, 100vw"
+          quality={70}
+          // Only the slide on screen is worth fetching up front; the rest of
+          // the gallery loads when the visitor asks for it.
+          loading={eager && i === 0 ? "eager" : "lazy"}
           aria-hidden={i !== index}
-          className={`absolute inset-0 h-full w-full object-cover transition-opacity duration-500 ${
+          className={`object-cover transition-opacity duration-500 ${
             i === index ? "opacity-100" : "opacity-0"
           }`}
         />

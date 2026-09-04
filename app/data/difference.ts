@@ -31,6 +31,10 @@ export const differences: Difference[] = [
         src: "/images/slg-56-c-spring-suspension.jpg",
         alt: "The C spring suspension under an SLG 56 screen deck, with the frame and hitch mount in view.",
       },
+      {
+        src: "/images/slg-spring-suspension-detail.jpg",
+        alt: "Close-up of the twin coil springs and the pivot plate that carry the screen deck off the frame.",
+      },
     ],
     art: "slg108",
   },
@@ -43,6 +47,10 @@ export const differences: Difference[] = [
       "Steeper slope to move material faster.",
     ],
     images: [
+      {
+        src: "/images/slg-tilting-deck-raised.jpg",
+        alt: "A loader bucket tipping over the raised screen deck of a DeSite grizzly, with the tilt linkage visible under the deck.",
+      },
       {
         src: "/images/slg-78-tilting-deck.jpg",
         alt: "A wheel loader tipping gravel onto an SLG 78 while the operator stays in the cab.",
@@ -60,6 +68,10 @@ export const differences: Difference[] = [
         src: "/images/slg-square-mesh.jpg",
         alt: "Head-on view of a square mesh deck holding back burnt wood and rock, with the oversize piled in front of the screener.",
       },
+      {
+        src: "/images/slg-square-mesh-deck.jpg",
+        alt: "A square mesh deck on the machine in the shop, with racks of spare mesh in the other openings behind it.",
+      },
     ],
     art: "grizzly",
   },
@@ -67,6 +79,16 @@ export const differences: Difference[] = [
     n: "4",
     title: "Quick Disconnect Riser Box",
     body: "Only DeSite offers a Riser that can be easily removed to bring the feed height down so that smaller equipment can feed the screener.",
+    images: [
+      {
+        src: "/images/slg-riser-box-quick-disconnect.jpg",
+        alt: "Close-up of the quick disconnect fittings and strap holding the riser box down to the galvanized base frame.",
+      },
+      {
+        src: "/images/slg-riser-box-latch.jpg",
+        alt: "A single quick disconnect fitting and strap on the riser box, below the lifting lug and the machine's data plates.",
+      },
+    ],
     art: "slg108",
   },
   {
@@ -75,6 +97,16 @@ export const differences: Difference[] = [
     body: "Easily transported from yard to jobsite on the same trailer that moves your equipment.",
     points: [
       "Once onsite DeSite grizzly\u2019s are easily moved with forks or a bucket using bucket transport lugs.",
+    ],
+    images: [
+      {
+        src: "/images/slg-transport-flatbed.jpg",
+        alt: "A DeSite grizzly chained down on a flatbed truck, ready to leave the yard for the jobsite.",
+      },
+      {
+        src: "/images/slg-transport-forks.jpg",
+        alt: "A Cat 242D skid steer carrying a DeSite grizzly across the yard on its bucket transport lugs.",
+      },
     ],
     art: "slg56",
   },

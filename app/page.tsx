@@ -8,21 +8,32 @@ import Videos from "./components/Videos";
 import Testimonials from "./components/Testimonials";
 import Faq from "./components/Faq";
 import QuoteForm from "./components/QuoteForm";
+import { getCurrency } from "./lib/currency.server";
+import StructuredData from "./components/StructuredData";
 
-export default function Home() {
+export default async function Home() {
+  // Resolved once and handed down, so every price on the page agrees.
+  const currency = await getCurrency();
+
   return (
     <>
+      <StructuredData currency={currency} />
       <Hero />
       <Difference />
-      <Products />
+      <Products currency={currency} />
       {screeners.map((model, i) => (
-        <ModelSection key={model.slug} model={model} tone={i % 2 === 0 ? "dark" : "darker"} />
+        <ModelSection
+          key={model.slug}
+          model={model}
+          currency={currency}
+          tone={i % 2 === 0 ? "dark" : "darker"}
+        />
       ))}
       <TrustBar />
       <Videos />
       <Testimonials />
-      <Faq />
-      <QuoteForm />
+      <Faq currency={currency} />
+      <QuoteForm currency={currency} />
     </>
   );
 }

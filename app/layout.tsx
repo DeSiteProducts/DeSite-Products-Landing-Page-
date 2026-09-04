@@ -1,33 +1,74 @@
 import type { Metadata, Viewport } from "next";
 import Header from "./components/Header";
 import Footer from "./components/Footer";
+import { SITE_NAME, SITE_URL } from "./lib/site";
 import "./globals.css";
 
-const title = "DeSite SLG Screeners | Bucket-fed topsoil and rock screening";
+const title = "Grizzly Screeners | DeSite SLG Bucket-Fed Topsoil & Rock";
 const description =
-  "Three DeSite SLG screeners for topsoil, mulch and rock: mini, compact and full-size. No engine, no hydraulics — a tilting mesh deck on spring suspension, fed straight from the bucket.";
+  "DeSite builds three bucket-fed grizzly screeners for topsoil, mulch, rock and aggregate: the SLG 56, SLG 78 and SLG 108. No engine, no hydraulics — a tilting square-mesh deck on spring suspension, loaded straight from the bucket.";
 
 export const metadata: Metadata = {
-  title: { default: title, template: "%s | DeSite SLG Screeners" },
+  metadataBase: new URL(SITE_URL),
+  title: { default: title, template: "%s | DeSite Grizzly Screeners" },
   description,
+  applicationName: SITE_NAME,
+  authors: [{ name: SITE_NAME, url: SITE_URL }],
+  creator: SITE_NAME,
+  publisher: SITE_NAME,
+  category: "Construction and landscaping equipment",
+  /**
+   * Search engines stopped weighting this tag years ago, but it costs nothing
+   * and it keeps the vocabulary we are targeting in one readable place.
+   */
   keywords: [
+    "grizzly screener",
+    "grizzly screeners",
+    "grizzly screen",
     "topsoil screener",
     "rock screener",
     "bucket screener",
+    "bucket-fed screener",
+    "portable grizzly screener",
     "skid steer screener",
     "mini excavator screener",
-    "DeSite SLG",
+    "excavator grizzly screener",
+    "aggregate screener",
+    "compost screener",
+    "mulch screener",
+    "dirt screener",
+    "gravel screener",
+    "screener for sale",
+    "vibrating grizzly screen",
+    "spring suspension grizzly",
+    "square mesh screener",
+    "DeSite SLG 56",
+    "DeSite SLG 78",
+    "DeSite SLG 108",
     "DeSite Products",
   ],
+  alternates: { canonical: "/" },
   openGraph: {
     title,
     description,
     type: "website",
+    url: "/",
     locale: "en_US",
-    siteName: "DeSite Products",
+    siteName: SITE_NAME,
   },
   twitter: { card: "summary_large_image", title, description },
-  robots: { index: true, follow: true },
+  robots: {
+    index: true,
+    follow: true,
+    googleBot: {
+      index: true,
+      follow: true,
+      "max-video-preview": -1,
+      "max-image-preview": "large",
+      "max-snippet": -1,
+    },
+  },
+  formatDetection: { telephone: true, address: true, email: true },
 };
 
 export const viewport: Viewport = {

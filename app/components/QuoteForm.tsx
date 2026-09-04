@@ -4,6 +4,7 @@ import { useState } from "react";
 import { questions, recommendModel } from "../data/qualify";
 import { screeners } from "../data/products";
 import { IconArrowRight, IconCheck, IconPhone } from "./Icons";
+import { CURRENCIES, type Currency } from "../lib/currency";
 
 type Status = "idle" | "sending" | "sent" | "error";
 
@@ -13,7 +14,7 @@ const field =
   "w-full rounded-xl border border-white/15 bg-white/[0.04] px-4 py-3.5 text-base text-white placeholder:text-white/35 transition-colors focus:border-brand focus:bg-white/[0.07] focus:outline-none";
 const label = "mb-2 block text-sm font-bold uppercase tracking-wider text-white/55";
 
-export default function QuoteForm() {
+export default function QuoteForm({ currency }: { currency: Currency }) {
   const [step, setStep] = useState(0);
   const [answers, setAnswers] = useState<Record<string, string>>({});
   const [status, setStatus] = useState<Status>("idle");
@@ -50,6 +51,9 @@ export default function QuoteForm() {
         body: JSON.stringify({
           ...contact,
           model: model ? model.name : "To be recommended",
+          // The currency they were shown, so the quote we send back matches
+          // the sticker price they read.
+          currency,
           answers,
         }),
       });
@@ -71,51 +75,11 @@ export default function QuoteForm() {
     <section id="quote" className="relative overflow-hidden bg-navy-950 py-20 lg:py-24">
       <div className="grid-tech absolute inset-0 opacity-50" aria-hidden="true" />
       <div
-        className="absolute -bottom-32 left-1/3 h-[420px] w-[420px] rounded-full bg-brand/20 blur-[130px]"
+        className="absolute -bottom-32 left-1/2 h-[420px] w-[420px] -translate-x-1/2 rounded-full bg-brand/20 blur-[130px]"
         aria-hidden="true"
       />
 
-      <div className="relative mx-auto grid max-w-7xl gap-14 px-5 lg:grid-cols-[0.85fr_1.15fr] lg:px-8">
-        <div>
-          <span className="inline-flex items-center gap-2 text-sm font-bold uppercase tracking-[0.22em] text-brand">
-            <span className="h-px w-8 bg-brand" />
-            Find Your Model
-          </span>
-          <h2 className="mt-4 font-display text-3xl font-extrabold leading-tight tracking-tight text-white sm:text-4xl lg:text-[2.75rem]">
-            Seven Questions, <span className="text-brand">One Answer</span>
-          </h2>
-          <p className="mt-5 text-lg leading-relaxed text-white/65">
-            They are the same questions an application engineer would ask on the
-            phone: what loads it, what you are screening, how much, how wet and
-            what you do with the product. Then we come back with the model, the
-            mesh opening and a delivered price.
-          </p>
-
-          <ul className="mt-10 space-y-4">
-            {[
-              "Takes about a minute",
-              "No obligation and no mailing lists",
-              "A real recommendation, even if it is the smaller machine",
-            ].map((t) => (
-              <li key={t} className="flex gap-3 text-base text-white/75">
-                <IconCheck className="mt-1.5 h-4 w-4 shrink-0 text-brand" />
-                {t}
-              </li>
-            ))}
-          </ul>
-
-          <div className="mt-10 border-t border-white/10 pt-8">
-            <p className="text-base text-white/50">Rather Just Talk To Somebody?</p>
-            <a
-              href="tel:+18772547903"
-              className="mt-2 flex items-center gap-3 font-display text-2xl font-extrabold text-white transition-colors hover:text-brand"
-            >
-              <IconPhone className="h-5 w-5 text-brand" />
-              877-254-7903
-            </a>
-          </div>
-        </div>
-
+      <div className="relative mx-auto max-w-3xl px-5 lg:px-8">
         <div className="rounded-3xl border border-white/10 bg-white/[0.03] p-6 backdrop-blur-sm sm:p-9">
           {status === "sent" ? (
             <div className="flex h-full min-h-96 flex-col items-center justify-center text-center">
@@ -313,11 +277,23 @@ export default function QuoteForm() {
 
                   <p className="mt-4 text-center text-sm text-white/40">
                     We use your details only to answer this request. No mailing lists.
+                    We will quote in {CURRENCIES[currency].label}.
                   </p>
                 </form>
               )}
             </>
           )}
+        </div>
+
+        <div className="mt-10 border-t border-white/10 pt-8 text-center">
+          <p className="text-base text-white/50">Rather Just Talk To Somebody?</p>
+          <a
+            href="tel:+18772547903"
+            className="mt-2 inline-flex items-center gap-3 font-display text-2xl font-extrabold text-white transition-colors hover:text-brand"
+          >
+            <IconPhone className="h-5 w-5 text-brand" />
+            877-254-7903
+          </a>
         </div>
       </div>
     </section>

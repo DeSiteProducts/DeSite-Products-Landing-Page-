@@ -1,3 +1,4 @@
+import Image from "next/image";
 import type { Machine } from "../data/equipment";
 
 /**
@@ -33,10 +34,15 @@ export default function EquipmentRow({
       >
         {machines.map((m) => (
           <li key={m.name} className="flex w-[7.25rem] items-end justify-center sm:w-[10rem]">
-            {/* eslint-disable-next-line @next/next/no-img-element */}
-            <img
+            <Image
               src={m.image}
               alt={m.name}
+              width={m.width}
+              height={m.height}
+              sizes="10rem"
+              quality={80}
+              // Every one of these rows sits well below the fold.
+              loading="lazy"
               className="h-auto"
               style={{ width: `${Math.min(m.scale * zoom, 1) * 100}%` }}
             />

@@ -1,9 +1,11 @@
+import Image from "next/image";
 import { screeners } from "../data/products";
+import { CURRENCIES, formatPrice, type Currency } from "../lib/currency";
 import EquipmentRow from "./EquipmentRow";
 import { compactEquipment, fullSizeEquipment, miniEquipment } from "../data/equipment";
 import { IconArrowRight } from "./Icons";
 
-export default function Products() {
+export default function Products({ currency }: { currency: Currency }) {
   return (
     <section id="equipment" className="relative overflow-hidden bg-ink py-20 lg:py-24">
       <div className="grid-tech absolute inset-0 opacity-25" aria-hidden="true" />
@@ -15,7 +17,7 @@ export default function Products() {
         </h2>
 
         <div className="mt-12 space-y-6">
-          {screeners.map((p) => {
+          {screeners.map((p, i) => {
             return (
               <article
                 key={p.slug}
@@ -31,11 +33,16 @@ export default function Products() {
                     className="absolute -left-10 -top-10 h-40 w-40 rounded-full bg-brand/10 blur-3xl"
                     aria-hidden="true"
                   />
-                  {/* eslint-disable-next-line @next/next/no-img-element */}
-                  <img
+                  <Image
                     src={p.image}
                     alt={p.imageAlt}
-                    className="relative w-full transition-transform duration-500 group-hover:scale-[1.04]"
+                    width={900}
+                    height={900}
+                    sizes="(min-width: 1024px) 20rem, (min-width: 768px) 15rem, 100vw"
+                    quality={80}
+                    // The first card sits just under the fold on a laptop.
+                    loading={i === 0 ? undefined : "lazy"}
+                    className="relative h-auto w-full transition-transform duration-500 group-hover:scale-[1.04]"
                   />
                   <span className="absolute left-5 top-5 rounded-full border border-brand/30 bg-brand/10 px-3 py-1 text-xs font-bold uppercase tracking-[0.16em] text-brand backdrop-blur">
                     {p.family}
@@ -73,10 +80,10 @@ export default function Products() {
                   <div>
                     <p className="text-xs uppercase tracking-[0.18em] text-white/40">Price</p>
                     <p className="mt-1 font-display text-4xl font-extrabold leading-none text-white">
-                      {p.price}
+                      {formatPrice(p.prices[currency], currency)}
                     </p>
                     <p className="mt-1.5 text-xs uppercase tracking-wider text-white/40">
-                      USD, before freight
+                      {CURRENCIES[currency].note}
                     </p>
                   </div>
 
@@ -124,10 +131,6 @@ export default function Products() {
             );
           })}
         </div>
-
-        <p className="mt-8 text-center text-base text-white/45">
-          Prices are in USD, before freight and tax. Send us your ZIP code for a delivered quote.
-        </p>
       </div>
     </section>
   );
