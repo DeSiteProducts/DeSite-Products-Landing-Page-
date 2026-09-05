@@ -3,6 +3,7 @@ import { comparisonRows, screeners, type Screener } from "../data/products";
 import { CURRENCIES, formatPrice, type Currency } from "../lib/currency";
 import { videos } from "../data/videos";
 import VideoCard from "./VideoCard";
+import SpecValue from "./SpecValue";
 import { IconArrowRight, IconCheck, IconPhone } from "./Icons";
 
 const artVariant = {
@@ -58,11 +59,9 @@ export default function ModelSection({
                 <div key={s.label}>
                   <dt className="text-xs uppercase tracking-wider text-white/40">{s.label}</dt>
                   <dd className="mt-0.5 font-display text-3xl font-extrabold text-white">
-                    {s.value}
-                    {s.unit ? (
-                      <span className="ml-1 text-base font-bold text-white/50">{s.unit}</span>
-                    ) : null}
+                    <SpecValue value={s.value} />
                   </dd>
+                  {s.note && <p className="mt-0.5 text-sm text-white/40">{s.note}</p>}
                 </div>
               ))}
             </dl>
@@ -71,8 +70,8 @@ export default function ModelSection({
               <p className="text-xs uppercase tracking-[0.18em] text-white/40">Price</p>
               <p className="mt-1 font-display text-4xl font-extrabold leading-none text-white">
                 {formatPrice(model.prices[currency], currency)}
-                <span className="ml-2 align-middle text-xs font-bold text-white/40">
-                  {CURRENCIES[currency].note}
+                <span className="ml-2 align-middle text-base font-bold text-white/45">
+                  {CURRENCIES[currency].label}
                 </span>
               </p>
             </div>

@@ -4,6 +4,7 @@ import { CURRENCIES, formatPrice, type Currency } from "../lib/currency";
 import EquipmentRow from "./EquipmentRow";
 import { compactEquipment, fullSizeEquipment, miniEquipment } from "../data/equipment";
 import { IconArrowRight } from "./Icons";
+import SpecValue from "./SpecValue";
 
 export default function Products({ currency }: { currency: Currency }) {
   return (
@@ -16,7 +17,7 @@ export default function Products({ currency }: { currency: Currency }) {
           <span className="text-brand">Your Equipment ?</span>
         </h2>
 
-        <div className="mt-12 space-y-6">
+        <div className="mt-12 space-y-12 lg:space-y-16">
           {screeners.map((p, i) => {
             return (
               <article
@@ -57,54 +58,58 @@ export default function Products({ currency }: { currency: Currency }) {
 
                   <dl className="mt-5 grid grid-cols-2 gap-4 sm:grid-cols-3">
                     {p.specs.map((spec) => (
-                      <div key={spec.label} className="flex flex-col justify-end">
+                      <div key={spec.label} className="flex flex-col">
                         <dt className="text-sm uppercase tracking-wider text-white/40">
                           {spec.label}
                         </dt>
                         <dd className="mt-1 whitespace-nowrap font-display text-2xl font-extrabold text-white sm:text-3xl">
-                          {spec.value}
-                          {spec.unit ? (
-                            <span className="ml-1 text-base font-bold text-white/50">
-                              {spec.unit}
-                            </span>
-                          ) : null}
+                          <SpecValue value={spec.value} />
                         </dd>
+                        {spec.note && (
+                          <p className="mt-0.5 text-sm text-white/40">{spec.note}</p>
+                        )}
                       </div>
                     ))}
                   </dl>
 
+                  <a
+                    href={`#${p.slug}`}
+                    className="mt-6 inline-flex items-center gap-2 rounded-full bg-brand px-6 py-3 text-base font-bold text-white transition-colors hover:bg-brand-300"
+                  >
+                    More Information
+                    <IconArrowRight className="h-4 w-4" />
+                  </a>
                 </div>
 
                 {/* Precio y acción */}
-                <div className="flex flex-col justify-center gap-4 border-t border-white/10 bg-navy-950/40 p-6 md:col-start-2 lg:col-start-3 lg:border-l lg:border-t-0 lg:p-8">
+                <div className="flex flex-col justify-center gap-5 border-t border-white/10 bg-navy-950/40 p-6 md:col-start-2 lg:col-start-3 lg:border-l lg:border-t-0 lg:p-8">
                   <div>
                     <p className="text-xs uppercase tracking-[0.18em] text-white/40">Price</p>
                     <p className="mt-1 font-display text-4xl font-extrabold leading-none text-white">
                       {formatPrice(p.prices[currency], currency)}
-                    </p>
-                    <p className="mt-1.5 text-xs uppercase tracking-wider text-white/40">
-                      {CURRENCIES[currency].note}
+                      <span className="ml-2 text-base font-bold text-white/45">
+                        {CURRENCIES[currency].label}
+                      </span>
                     </p>
                   </div>
 
                   <a
                     href="#quote"
-                    className={`group/cta inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-full px-5 py-4 text-base font-bold transition-all ${
+                    className={`group/cta flex flex-col items-center justify-center rounded-2xl px-3 py-4 text-center transition-all ${
                       p.featured
                         ? "bg-brand text-navy hover:bg-brand-300"
                         : "border border-white/25 text-white hover:border-brand hover:bg-brand hover:text-navy"
                     }`}
                   >
-                    Quote The {p.name}
-                    <IconArrowRight className="h-4 w-4 transition-transform group-hover/cta:translate-x-1" />
+                    <span className="whitespace-nowrap font-display text-base font-extrabold leading-tight">
+                      Save 50% On Freight
+                    </span>
+                    <span className="mt-0.5 inline-flex items-center gap-1.5 text-base font-bold opacity-80">
+                      Get A Code
+                      <IconArrowRight className="h-4 w-4 transition-transform group-hover/cta:translate-x-1" />
+                    </span>
                   </a>
 
-                  <a
-                    href={`#${p.slug}`}
-                    className="text-center text-base font-semibold text-white/50 underline underline-offset-4 transition-colors hover:text-brand"
-                  >
-                    More Information
-                  </a>
                 </div>
 
                 {p.slug === "slg-108" && (

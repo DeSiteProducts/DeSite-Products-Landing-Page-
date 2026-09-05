@@ -31,7 +31,7 @@ export default function Hero() {
               href="#equipment"
               className="group inline-flex items-center justify-center gap-2 rounded-full bg-brand px-7 py-4 text-base font-bold text-navy transition-all hover:bg-brand-300 hover:shadow-[0_0_40px_-8px_var(--color-brand)]"
             >
-              See The Three Models
+              View All Models
               <IconArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-1" />
             </a>
             <a

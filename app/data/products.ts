@@ -16,8 +16,11 @@ export type Screener = {
   image: string;
   imageAlt: string;
   highlights: string[];
-  /** `unit` renders small next to the value (e.g. 6 × 10 ft). */
-  specs: { label: string; value: string; unit?: string }[];
+  /**
+   * `note` is the small line under the figure ("yards per hour"). Units inside
+   * `value` are typed as written and drawn small by the card.
+   */
+  specs: { label: string; value: string; note?: string }[];
   bestFor: string[];
 };
 
@@ -44,7 +47,7 @@ export const screeners: Screener[] = [
     imageAlt: "DeSite SLG 108 screener with its galvanised riser box and tilting mesh deck.",
     name: "SLG 108",
     family: "Full-size equipment",
-    prices: { USD: 14900, CAD: 14500 },
+    prices: { USD: 15500, CAD: 14500 },
     highlights: [
       "Tilting deck adjusts from 45° to 30°",
       "Takes buckets from 84 to 108 in",
@@ -52,8 +55,8 @@ export const screeners: Screener[] = [
       "Optional galvanized riser box, 5 yd per side",
     ],
     specs: [
-      { label: "Production (yd³/hr)", value: "50–80" },
-      { label: "Screen deck", value: "6 × 10", unit: "ft" },
+      { label: "Production", value: "50–80", note: "yards per hour" },
+      { label: "Screen deck", value: "6ft × 10ft" },
       { label: "Weight (lb)", value: "4,300" },
     ],
     bestFor: materials,
@@ -64,7 +67,7 @@ export const screeners: Screener[] = [
     imageAlt: "DeSite SLG 78 screener with fork pockets and a tilting mesh deck.",
     name: "SLG 78",
     family: "Compact equipment",
-    prices: { USD: 7900, CAD: 8500 },
+    prices: { USD: 8500, CAD: 8500 },
     featured: true,
     highlights: [
       "Tilting deck adjusts from 45° to 30°",
@@ -73,8 +76,8 @@ export const screeners: Screener[] = [
       "Fits skid steers, tractors and compact loaders",
     ],
     specs: [
-      { label: "Production (yd³/hr)", value: "30–50" },
-      { label: "Screen deck", value: "4 × 7", unit: "ft" },
+      { label: "Production", value: "30–50", note: "yards per hour" },
+      { label: "Screen deck", value: "4ft × 7ft" },
       { label: "Weight (lb)", value: "1,750" },
     ],
     bestFor: materials,
@@ -85,7 +88,7 @@ export const screeners: Screener[] = [
     imageAlt: "DeSite SLG 56 mini screener on its removable wheels and tow hitch.",
     name: "SLG 56",
     family: "Mini equipment",
-    prices: { USD: 4500, CAD: 4700 },
+    prices: { USD: 4900, CAD: 4700 },
     highlights: [
       "Tilting deck adjusts from 45° to 30°",
       "C spring suspension with rubber deck skirts",
@@ -93,8 +96,8 @@ export const screeners: Screener[] = [
       "Ships flat-packed, about 1.5 hours to assemble",
     ],
     specs: [
-      { label: "Production (yd³/hr)", value: "5–10" },
-      { label: "Screen deck", value: "4 × 5", unit: "ft" },
+      { label: "Production", value: "5–10", note: "yards per hour" },
+      { label: "Screen deck", value: "4ft × 5ft" },
       { label: "Weight (lb)", value: "882" },
     ],
     bestFor: [
@@ -125,7 +128,7 @@ export const comparisonRows: { label: string; values: [string, string, string] }
       "C spring",
     ],
   },
-  { label: "Screen deck", values: ["6 × 10 ft", "4 × 7 ft", "4 × 5 ft"] },
+  { label: "Screen deck", values: ["6ft × 10ft", "4ft × 7ft", "4ft × 5ft"] },
   { label: "Deck tilt angle", values: ["45° to 30°", "45° to 30°", "45° to 30°"] },
   { label: "Machine width × height", values: ["126 × 122 in", "95 × 90 in", "74 × 61.4 in"] },
   { label: "Total weight", values: ["4,300 lb (5,500 with riser box)", "1,750 lb (2,250 with riser box)", "882 lb"] },
