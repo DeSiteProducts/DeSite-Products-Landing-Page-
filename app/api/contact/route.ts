@@ -18,15 +18,10 @@ type Payload = {
 
   /** Model the qualification answers point to. */
   model?: string;
-<<<<<<< Updated upstream
 
   /** Currency the visitor was shown. */
   currency?: string;
 
-=======
-  /** Currency the visitor was shown, so we quote them in the same one. */
-  currency?: string;
->>>>>>> Stashed changes
   message?: string;
 
   /** Qualification answers, keyed by question id. */
@@ -123,15 +118,10 @@ export async function POST(request: Request) {
     answer: value,
   }));
 
-<<<<<<< Updated upstream
   /**
    * Currency is resolved primarily from the proxy header.
    * The body value is only a fallback.
    */
-=======
-  // The proxy resolves this from the country the request came from. The posted
-  // value is only a fallback, since anything in the body is client-supplied.
->>>>>>> Stashed changes
   const currency =
     parseCurrency(request.headers.get(CURRENCY_HEADER)) ??
     parseCurrency(data.currency) ??
@@ -159,13 +149,7 @@ export async function POST(request: Request) {
     country,
 
     message: data.message?.trim() || "",
-<<<<<<< Updated upstream
 
-=======
-    // La moneda que vio el visitante, para cotizarle en la misma.
-    currency,
-    country: country ?? "",
->>>>>>> Stashed changes
     qualification,
 
     answers: data.answers ?? {},
