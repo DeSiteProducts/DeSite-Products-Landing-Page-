@@ -1,4 +1,5 @@
 import { NextResponse } from "next/server";
+
 import {
   COUNTRY_HEADER,
   CURRENCY_HEADER,
@@ -17,12 +18,10 @@ type Payload = {
 
   /** Model the qualification answers point to. */
   model?: string;
-<<<<<<< HEAD
-  /** Currency the visitor was shown, so we quote them in the same one. */
-  currency?: string;
-=======
 
->>>>>>> 0ba811fcb0ff425b5b89bc098dd327e2c60a324c
+  /** Currency the visitor was shown. */
+  currency?: string;
+
   message?: string;
 
   /** Qualification answers, keyed by question id. */
@@ -33,50 +32,6 @@ type Payload = {
 };
 
 const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/;
-
-/**
- * Construye la URL de redirección.
- */
-function buildRedirectUrl(
-  request: Request,
-  pathname: string,
-  result?: "error" | "success",
-  params?: Record<string, string>
-) {
-  const url = new URL(
-    pathname,
-    process.env.NEXT_PUBLIC_SITE_URL ?? request.url
-  );
-
-  if (result) {
-    url.searchParams.set(result, "1");
-  }
-
-  if (params) {
-    for (const [key, value] of Object.entries(params)) {
-      if (value) {
-        url.searchParams.set(key, value);
-      }
-    }
-  }
-
-  return url;
-}
-
-/**
- * Redirección después del POST.
- */
-function redirectAfterPost(
-  request: Request,
-  pathname: string,
-  result?: "error" | "success",
-  params?: Record<string, string>
-) {
-  return NextResponse.redirect(
-    buildRedirectUrl(request, pathname, result, params),
-    { status: 303 }
-  );
-}
 
 export async function POST(request: Request) {
   let data: Payload;
@@ -92,8 +47,6 @@ export async function POST(request: Request) {
 
   /**
    * Honeypot anti-spam.
-   * Si un bot llena el campo website, respondemos OK
-   * pero no procesamos nada.
    */
   if (data.website) {
     return NextResponse.json({
@@ -103,7 +56,7 @@ export async function POST(request: Request) {
   }
 
   /**
-   * Validación.
+   * Validation.
    */
   const errors: string[] = [];
 
@@ -143,7 +96,7 @@ export async function POST(request: Request) {
   }
 
   /**
-   * Labels para las respuestas del cuestionario.
+   * Question labels.
    */
   const labels: Record<string, string> = {
     carrier: "Loading machine",
@@ -156,7 +109,7 @@ export async function POST(request: Request) {
   };
 
   /**
-   * Formateamos las respuestas.
+   * Format qualification answers.
    */
   const qualification = Object.entries(
     data.answers ?? {}
@@ -165,42 +118,23 @@ export async function POST(request: Request) {
     answer: value,
   }));
 
-<<<<<<< HEAD
-  // The proxy resolves this from the country the request came from. The posted
-  // value is only a fallback, since anything in the body is client-supplied.
+  /**
+   * Currency is resolved primarily from the proxy header.
+   * The body value is only a fallback.
+   */
   const currency =
     parseCurrency(request.headers.get(CURRENCY_HEADER)) ??
     parseCurrency(data.currency) ??
     DEFAULT_CURRENCY;
-  const country = request.headers.get(COUNTRY_HEADER);
 
-  const lines = [
-    `Name:     ${data.name}`,
-    `Company:  ${data.company || "—"}`,
-    `Email:    ${data.email}`,
-    `Phone:    ${data.phone || "—"}`,
-    `ZIP:      ${data.zip || "—"}`,
-    `Model:    ${data.model}`,
-    `Currency: ${currency}${country ? ` (request from ${country})` : ""}`,
-    "",
-    "Qualification:",
-    ...(qualification.length ? qualification : ["  (no answers)"]),
-    "",
-    "Notes:",
-    data.message || "—",
-  ].join("\n");
-
-  const { SMTP_HOST, SMTP_PORT, SMTP_USER, SMTP_PASS, CONTACT_TO, CONTACT_FROM } =
-    process.env;
-
-  if (!SMTP_HOST || !SMTP_USER || !SMTP_PASS || !CONTACT_TO) {
-    // No SMTP credentials configured: log the lead so it is not lost.
-    console.info("[quote] SMTP not configured, lead received:\n" + lines);
-    return NextResponse.json({ ok: true, delivered: false });
-  }
-=======
   /**
-   * Payload que enviaremos a AWS Lambda.
+   * Country detected by the proxy.
+   */
+  const country =
+    request.headers.get(COUNTRY_HEADER) ?? "";
+
+  /**
+   * Payload sent to AWS Lambda.
    */
   const lambdaPayload = {
     name: data.name.trim(),
@@ -209,34 +143,44 @@ export async function POST(request: Request) {
     phone: data.phone?.trim() || "",
     zip: data.zip?.trim() || "",
     model: data.model.trim(),
+
+    currency,
+
+    country,
+
     message: data.message?.trim() || "",
+
     qualification,
+
     answers: data.answers ?? {},
   };
->>>>>>> 0ba811fcb0ff425b5b89bc098dd327e2c60a324c
 
   try {
     /**
-     * Enviar información a AWS Lambda.
+     * Send information to AWS Lambda.
      */
     const response = await fetch(
       "https://7d8v3ptt1c.execute-api.us-east-1.amazonaws.com/default/sendQuoteGrizzlyEmail",
       {
         method: "POST",
+
         headers: {
           "Content-Type": "application/json",
         },
+
         body: JSON.stringify(lambdaPayload),
       }
     );
 
     /**
-     * Si Lambda devuelve error.
+     * Lambda returned an error.
      */
     if (!response.ok) {
+      const errorText = await response.text();
+
       console.error(
         "[quote] Lambda email request failed",
-        await response.text()
+        errorText
       );
 
       return NextResponse.json(
@@ -249,28 +193,18 @@ export async function POST(request: Request) {
     }
 
     /**
-     * Éxito.
+     * Success.
      */
     return NextResponse.json({
       ok: true,
       delivered: true,
     });
 
-<<<<<<< HEAD
-    await transport.sendMail({
-      from: CONTACT_FROM || SMTP_USER,
-      to: CONTACT_TO,
-      replyTo: data.email,
-      subject: `Quote request (${currency}) — ${data.model} — ${data.name}${data.company ? ` (${data.company})` : ""}`,
-      text: lines,
-    });
-=======
   } catch (error) {
     console.error(
       "[quote] Failed to send quote request",
       error
     );
->>>>>>> 0ba811fcb0ff425b5b89bc098dd327e2c60a324c
 
     return NextResponse.json(
       {
