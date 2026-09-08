@@ -31,13 +31,13 @@ export default function Footer() {
 
           {columns.map((col) => (
             <nav key={col.title} aria-label={col.title}>
-              <h3 className="text-sm font-bold uppercase tracking-[0.18em] text-white/45">
+              <h3 className="text-sm font-bold uppercase tracking-[0.18em] text-white/70">
                 {col.title}
               </h3>
               <ul className="mt-5 space-y-3">
                 {col.links.map((l) => (
                   <li key={l.label}>
-                    <a href={l.href} className="text-base text-white/70 transition-colors hover:text-brand">
+                    <a href={l.href} className="inline-flex min-h-8 items-center text-base text-white/70 transition-colors hover:text-brand">
                       {l.label}
                     </a>
                   </li>
@@ -47,7 +47,7 @@ export default function Footer() {
           ))}
 
           <div>
-            <h3 className="text-sm font-bold uppercase tracking-[0.18em] text-white/45">
+            <h3 className="text-sm font-bold uppercase tracking-[0.18em] text-white/70">
               Contact
             </h3>
             <ul className="mt-5 space-y-3 text-base text-white/70">
@@ -68,7 +68,7 @@ export default function Footer() {
         </div>
 
         <div className="mt-14 border-t border-white/10 pt-8">
-          <p className="text-sm text-white/40">
+          <p className="text-sm text-white/70">
             © {new Date().getFullYear()} DeSite Products. All rights reserved.
           </p>
         </div>

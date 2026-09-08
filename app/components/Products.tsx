@@ -52,29 +52,29 @@ export default function Products({ currency }: { currency: Currency }) {
 
                 {/* Contenido */}
                 <div className="p-6 lg:p-8">
-                  <h4 className="font-display text-3xl font-extrabold tracking-tight text-white">
+                  <h3 className="font-display text-3xl font-extrabold tracking-tight text-white">
                     {p.name}
-                  </h4>
+                  </h3>
 
                   <dl className="mt-5 grid grid-cols-2 gap-4 sm:grid-cols-3">
                     {p.specs.map((spec) => (
                       <div key={spec.label} className="flex flex-col">
-                        <dt className="text-sm uppercase tracking-wider text-white/40">
+                        <dt className="text-sm uppercase tracking-wider text-white/70">
                           {spec.label}
                         </dt>
                         <dd className="mt-1 whitespace-nowrap font-display text-2xl font-extrabold text-white sm:text-3xl">
                           <SpecValue value={spec.value} />
+                          {spec.note && (
+                            <span className="mt-0.5 block font-sans text-sm font-normal text-white/70">{spec.note}</span>
+                          )}
                         </dd>
-                        {spec.note && (
-                          <p className="mt-0.5 text-sm text-white/40">{spec.note}</p>
-                        )}
                       </div>
                     ))}
                   </dl>
 
                   <a
                     href={`#${p.slug}`}
-                    className="mt-6 inline-flex items-center gap-2 rounded-full bg-brand px-6 py-3 text-base font-bold text-white transition-colors hover:bg-brand-300"
+                    className="mt-6 inline-flex items-center gap-2 rounded-full bg-brand px-6 py-3 text-base font-bold text-navy transition-colors hover:bg-brand-300"
                   >
                     More Information
                     <IconArrowRight className="h-4 w-4" />
@@ -84,10 +84,10 @@ export default function Products({ currency }: { currency: Currency }) {
                 {/* Precio y acción */}
                 <div className="flex flex-col justify-center gap-5 border-t border-white/10 bg-navy-950/40 p-6 md:col-start-2 lg:col-start-3 lg:border-l lg:border-t-0 lg:p-8">
                   <div>
-                    <p className="text-xs uppercase tracking-[0.18em] text-white/40">Price</p>
+                    <p className="text-xs uppercase tracking-[0.18em] text-white/70">Price</p>
                     <p className="mt-1 font-display text-4xl font-extrabold leading-none text-white">
                       {formatPrice(p.prices[currency], currency)}
-                      <span className="ml-2 text-base font-bold text-white/45">
+                      <span className="ml-2 text-base font-bold text-white/70">
                         {CURRENCIES[currency].label}
                       </span>
                     </p>

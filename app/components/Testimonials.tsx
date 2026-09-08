@@ -43,7 +43,7 @@ export default function Testimonials() {
               </blockquote>
               <figcaption className="mt-7 border-t border-white/10 pt-5">
                 <p className="text-base font-bold text-white">{q.role}</p>
-                <p className="text-sm text-white/50">{q.context}</p>
+                <p className="text-sm text-white/70">{q.context}</p>
               </figcaption>
             </figure>
           ))}

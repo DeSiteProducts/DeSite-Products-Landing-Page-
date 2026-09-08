@@ -1,9 +1,12 @@
 "use client";
 
 import Image from "next/image";
+import dynamic from "next/dynamic";
 import { useState } from "react";
 import type { VideoItem } from "../data/videos";
-import ScreenerArt from "./ScreenerArt";
+
+// Only download and render the detailed illustration if a thumbnail fails.
+const ScreenerArt = dynamic(() => import("./ScreenerArt"));
 
 function runtime(seconds?: number) {
   if (!seconds) return null;
@@ -35,17 +38,19 @@ export default function VideoCard({ video, featured }: { video: VideoItem; featu
           />
         ) : (
           <>
-            {/* La ilustración queda siempre debajo: si la miniatura tarda o
-                no carga, la tarjeta nunca se ve vacía. */}
-            <div className="absolute inset-0 flex items-center justify-center p-4 opacity-70">
-              <ScreenerArt variant={video.model} className="h-full w-full" />
-            </div>
+            {(!video.thumb || thumbFailed) && (
+              <div className="absolute inset-0 flex items-center justify-center p-4 opacity-70">
+                <ScreenerArt variant={video.model} className="h-full w-full" />
+              </div>
+            )}
             {video.thumb && !thumbFailed && (
               <Image
                 src={video.thumb}
                 alt=""
                 fill
-                sizes={featured ? "(min-width: 1024px) 50vw, 100vw" : "(min-width: 1024px) 25vw, (min-width: 640px) 50vw, 100vw"}
+                sizes={featured
+                  ? "(min-width: 1536px) 912px, (min-width: 1024px) calc(66.67vw - 5rem), (min-width: 640px) calc(50vw - 3.125rem), calc(100vw - 2.5rem)"
+                  : "(min-width: 1536px) 444px, (min-width: 1024px) calc(33.33vw - 3.5rem), (min-width: 640px) calc(50vw - 3.125rem), calc(100vw - 2.5rem)"}
                 quality={70}
                 loading="lazy"
                 onError={() => setThumbFailed(true)}

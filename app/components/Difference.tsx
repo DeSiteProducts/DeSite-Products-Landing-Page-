@@ -16,10 +16,10 @@ export default function Difference() {
       <div className="relative mx-auto max-w-7xl px-5 lg:px-8">
         {/* La promesa, en cinco palabras */}
         <div className="mx-auto max-w-4xl text-center">
-          <span className="inline-flex items-center gap-2 text-sm font-bold uppercase tracking-[0.22em] text-brand">
+          <h2 className="inline-flex items-center gap-2 text-sm font-bold uppercase tracking-[0.22em] text-brand">
             <span className="h-px w-8 bg-brand" />
             The DeSite Difference
-          </span>
+          </h2>
 
           <ul className="mt-6 flex flex-wrap items-center justify-center gap-x-4 gap-y-2 font-display text-2xl font-extrabold tracking-tight text-white sm:text-3xl lg:text-4xl">
             {claims.map((c, i) => (
@@ -50,11 +50,11 @@ export default function Difference() {
             >
               <PhotoGallery
                 photos={d.images ?? []}
-                eager={i === 0}
                 fallback={
+                  !d.images?.length ?
                   <div className="flex h-full items-center justify-center bg-gradient-to-br from-navy-800/50 via-navy-950 to-ink p-6 lg:p-8">
                     <Artwork art={d.art} />
-                  </div>
+                  </div> : undefined
                 }
               />
 

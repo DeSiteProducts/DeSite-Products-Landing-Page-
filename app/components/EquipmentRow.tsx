@@ -39,7 +39,7 @@ export default function EquipmentRow({
               alt={m.name}
               width={m.width}
               height={m.height}
-              sizes="10rem"
+              sizes={`(min-width: 640px) ${10 * Math.min(m.scale * zoom, 1)}rem, ${7.25 * Math.min(m.scale * zoom, 1)}rem`}
               quality={80}
               // Every one of these rows sits well below the fold.
               loading="lazy"

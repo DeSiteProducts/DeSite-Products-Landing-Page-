@@ -57,20 +57,20 @@ export default function ModelSection({
             <dl className="mt-8 flex flex-wrap gap-x-10 gap-y-5">
               {model.specs.map((s) => (
                 <div key={s.label}>
-                  <dt className="text-xs uppercase tracking-wider text-white/40">{s.label}</dt>
+                  <dt className="text-xs uppercase tracking-wider text-white/70">{s.label}</dt>
                   <dd className="mt-0.5 font-display text-3xl font-extrabold text-white">
                     <SpecValue value={s.value} />
+                    {s.note && <span className="mt-0.5 block font-sans text-sm font-normal text-white/70">{s.note}</span>}
                   </dd>
-                  {s.note && <p className="mt-0.5 text-sm text-white/40">{s.note}</p>}
                 </div>
               ))}
             </dl>
 
             <div className="mt-10 border-t border-white/10 pt-8">
-              <p className="text-xs uppercase tracking-[0.18em] text-white/40">Price</p>
+              <p className="text-xs uppercase tracking-[0.18em] text-white/70">Price</p>
               <p className="mt-1 font-display text-4xl font-extrabold leading-none text-white">
                 {formatPrice(model.prices[currency], currency)}
-                <span className="ml-2 align-middle text-base font-bold text-white/45">
+                <span className="ml-2 align-middle text-base font-bold text-white/70">
                   {CURRENCIES[currency].label}
                 </span>
               </p>
@@ -100,7 +100,7 @@ export default function ModelSection({
               alt={model.imageAlt}
               width={900}
               height={900}
-              sizes="(min-width: 1024px) 40vw, 100vw"
+              sizes="(min-width: 1536px) 570px, (min-width: 1024px) calc(52.38vw - 10rem), calc(100vw - 5.5rem)"
               quality={80}
               loading="lazy"
               className="h-auto w-full"

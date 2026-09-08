@@ -11,8 +11,8 @@ type Status = "idle" | "sending" | "sent" | "error";
 const TOTAL = questions.length + 1; // preguntas + datos de contacto
 
 const field =
-  "w-full rounded-xl border border-white/15 bg-white/[0.04] px-4 py-3.5 text-base text-white placeholder:text-white/35 transition-colors focus:border-brand focus:bg-white/[0.07] focus:outline-none";
-const label = "mb-2 block text-sm font-bold uppercase tracking-wider text-white/55";
+  "w-full rounded-xl border border-white/15 bg-white/[0.04] px-4 py-3.5 text-base text-white placeholder:text-white/70 transition-colors focus:border-brand focus:bg-white/[0.07] focus:outline-none";
+const label = "mb-2 block text-sm font-bold uppercase tracking-wider text-white/70";
 
 export default function QuoteForm({ currency }: { currency: Currency }) {
   const [step, setStep] = useState(0);
@@ -99,7 +99,7 @@ export default function QuoteForm({ currency }: { currency: Currency }) {
             <>
               {/* Progreso */}
               <div className="flex items-center justify-between gap-4">
-                <p className="text-sm font-bold uppercase tracking-wider text-white/45">
+                <p className="text-sm font-bold uppercase tracking-wider text-white/70">
                   {isContactStep ? "Last step" : `Question ${step + 1} of ${questions.length}`}
                 </p>
                 {model && (
@@ -126,7 +126,7 @@ export default function QuoteForm({ currency }: { currency: Currency }) {
                     {question.question}
                   </legend>
                   {question.help && (
-                    <p className="mt-3 text-base leading-relaxed text-white/55">{question.help}</p>
+                    <p className="mt-3 text-base leading-relaxed text-white/70">{question.help}</p>
                   )}
 
                   <div className="mt-6 space-y-3">
@@ -162,7 +162,7 @@ export default function QuoteForm({ currency }: { currency: Currency }) {
                               {o.value}
                             </span>
                             {o.hint && (
-                              <span className="mt-0.5 block text-sm text-white/45">{o.hint}</span>
+                              <span className="mt-0.5 block text-sm text-white/70">{o.hint}</span>
                             )}
                           </span>
                         </label>
@@ -275,7 +275,7 @@ export default function QuoteForm({ currency }: { currency: Currency }) {
                     </button>
                   </div>
 
-                  <p className="mt-4 text-center text-sm text-white/40">
+                  <p className="mt-4 text-center text-sm text-white/70">
                     We use your details only to answer this request. No mailing lists.
                     We will quote in {CURRENCIES[currency].label}.
                   </p>
@@ -286,7 +286,7 @@ export default function QuoteForm({ currency }: { currency: Currency }) {
         </div>
 
         <div className="mt-10 border-t border-white/10 pt-8 text-center">
-          <p className="text-base text-white/50">Rather Just Talk To Somebody?</p>
+          <p className="text-base text-white/70">Rather Just Talk To Somebody?</p>
           <a
             href="tel:+18772547903"
             className="mt-2 inline-flex items-center gap-3 font-display text-2xl font-extrabold text-white transition-colors hover:text-brand"

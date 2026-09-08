@@ -13,7 +13,7 @@ export default function TrustBar() {
 
   return (
     <section className="border-y border-white/10 bg-ink py-7" aria-label="Industries served">
-      <p className="mb-5 text-center text-xs uppercase tracking-[0.3em] text-white/40">
+      <p className="mb-5 text-center text-xs uppercase tracking-[0.3em] text-white/70">
         Screening On Site For
       </p>
       <div className="relative overflow-hidden [mask-image:linear-gradient(to_right,transparent,black_12%,black_88%,transparent)]">
@@ -21,7 +21,8 @@ export default function TrustBar() {
           {loop.map((s, i) => (
             <li
               key={`${s}-${i}`}
-              className="flex shrink-0 items-center gap-3 font-display text-base font-bold uppercase tracking-wide text-white/45"
+              aria-hidden={i >= sectors.length}
+              className="flex shrink-0 items-center gap-3 font-display text-base font-bold uppercase tracking-wide text-white/70"
             >
               <span className="h-1.5 w-1.5 rounded-full bg-brand" />
               {s}

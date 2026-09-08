@@ -1,7 +1,7 @@
 "use client";
 
 import Image from "next/image";
-import { useState, type ReactNode } from "react";
+import { useRef, useState, type ReactNode } from "react";
 
 type Photo = { src: string; alt: string };
 
@@ -22,17 +22,23 @@ export default function PhotoGallery({
   eager?: boolean;
 }) {
   const [index, setIndex] = useState(0);
+  const [visibleIndex, setVisibleIndex] = useState(0);
+  const [visited, setVisited] = useState(() => new Set([0]));
+  const loaded = useRef(new Set<number>());
   const many = photos.length > 1;
 
   function go(next: number) {
-    setIndex(((next % photos.length) + photos.length) % photos.length);
+    const target = ((next % photos.length) + photos.length) % photos.length;
+    setVisited((previous) => new Set(previous).add(target));
+    setIndex(target);
+    if (loaded.current.has(target)) setVisibleIndex(target);
   }
 
   return (
     <figure className="group relative min-h-72 overflow-hidden bg-navy-950">
       {photos.length === 0 && fallback}
 
-      {photos.map((p, i) => (
+      {photos.map((p, i) => visited.has(i) && (
         <Image
           key={p.src}
           src={p.src}
@@ -40,14 +46,18 @@ export default function PhotoGallery({
           fill
           // Half the grid on desktop, capped at what the container can ever
           // be (max-w-7xl split in two), the full width below it.
-          sizes="(min-width: 1536px) 760px, (min-width: 768px) 50vw, 100vw"
+          sizes="(min-width: 1536px) 684px, (min-width: 1024px) calc(50vw - 4rem), (min-width: 768px) calc(50vw - 1.25rem), calc(100vw - 2.5rem)"
           quality={70}
           // Only the slide on screen is worth fetching up front; the rest of
           // the gallery loads when the visitor asks for it.
-          loading={eager && i === 0 ? "eager" : "lazy"}
-          aria-hidden={i !== index}
+          loading={(eager && i === 0) || i === index && i !== 0 ? "eager" : "lazy"}
+          onLoad={() => {
+            loaded.current.add(i);
+            if (i === index) setVisibleIndex(i);
+          }}
+          aria-hidden={i !== visibleIndex}
           className={`object-cover transition-opacity duration-500 ${
-            i === index ? "opacity-100" : "opacity-0"
+            i === visibleIndex ? "opacity-100" : "opacity-0"
           }`}
         />
       ))}
@@ -78,10 +88,12 @@ export default function PhotoGallery({
                 onClick={() => go(i)}
                 aria-label={`Photo ${i + 1} of ${photos.length}`}
                 aria-current={i === index}
-                className={`h-1.5 rounded-full transition-all ${
-                  i === index ? "w-6 bg-brand" : "w-1.5 bg-white/50 hover:bg-white"
-                }`}
-              />
+                className="inline-flex h-8 w-8 items-center justify-center rounded-full bg-ink/70"
+              >
+                <span className={`h-1.5 rounded-full transition-all ${
+                  i === index ? "w-6 bg-brand" : "w-1.5 bg-white/70 hover:bg-white"
+                }`} />
+              </button>
             ))}
           </div>
         </>
