@@ -26,9 +26,6 @@ const screenerCatalog = {
   "@id": `${SITE_URL}/#grizzly-screeners`,
   name: "DeSite Grizzly Screeners",
   description,
-  verification: {
-  google: "iRRc6BdbwG9tYPD3edWW84_fYIX2SuNyTUoDBJlofvM",
-  },
   url: `${SITE_URL}/#equipment`,
   mainEntityOfPage: { "@id": `${SITE_URL}/#webpage` },
   numberOfItems: screeners.length,
@@ -47,6 +44,9 @@ const screenerCatalog = {
 export const metadata: Metadata = {
   metadataBase: new URL(SITE_URL),
   title: { default: title, template: "%s | DeSite Grizzly Screeners" },
+  verification: {
+    google: "iRRc6BdbwG9tYPD3edWW84_fYIX2SuNyTUoDBJlofvM",
+  },
   description,
   applicationName: SITE_NAME,
   authors: [{ name: SITE_NAME, url: SITE_URL }],
