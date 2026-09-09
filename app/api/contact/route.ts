@@ -1,4 +1,5 @@
 import { NextResponse } from "next/server";
+import type { Attribution } from "../../lib/attribution";
 
 import {
   COUNTRY_HEADER,
@@ -14,7 +15,18 @@ type Payload = {
   company?: string;
   email?: string;
   phone?: string;
+
+  /** Delivery address. The country comes from the request, not the form. */
+  address?: string;
+  city?: string;
+  state?: string;
   zip?: string;
+
+  /** The consent box was ticked. Recorded with the lead. */
+  consent?: boolean;
+
+  /** Where the visitor came from. See app/lib/attribution.ts. */
+  attribution?: Attribution | null;
 
   /** Model the qualification answers point to. */
   model?: string;
@@ -75,6 +87,14 @@ export async function POST(request: Request) {
     errors.push("model");
   }
 
+  /**
+   * Sin la casilla marcada no hay permiso para guardar el dato ni para
+   * contactar, así que no puede quedarse solo en el cliente.
+   */
+  if (data.consent !== true) {
+    errors.push("consent");
+  }
+
   if (errors.length > 0) {
     console.warn("[quote] Invalid form submission", {
       errors,
@@ -99,12 +119,10 @@ export async function POST(request: Request) {
    * Question labels.
    */
   const labels: Record<string, string> = {
-    carrier: "Loading machine",
+    equipment: "Equipment on site",
     material: "Material",
     volume: "Volume per hour",
-    productSize: "Product size",
-    moisture: "Moisture",
-    purpose: "Selling the product",
+    productSize: "Finished product size",
     timeline: "Timeline",
   };
 
@@ -117,6 +135,32 @@ export async function POST(request: Request) {
     question: labels[key] ?? key,
     answer: value,
   }));
+
+  /**
+   * The lead source rides along in the same question/answer list.
+   *
+   * It is not a qualification answer, but this is the one part of the payload
+   * the Lambda already walks and prints, so the origin shows up in the email
+   * without the Lambda having to be redeployed first.
+   */
+  const attribution = data.attribution ?? null;
+
+  if (attribution) {
+    const rows: [string, string | undefined][] = [
+      ["Lead source", attribution.source],
+      ["Channel", attribution.channel],
+      ["Campaign", attribution.campaign],
+      ["Ad group / term", attribution.term],
+      ["Ad content", attribution.content],
+      ["Click ID", attribution.clickId],
+      ["Referrer", attribution.referrer || undefined],
+      ["Landing page", attribution.landingPage],
+    ];
+
+    for (const [question, answer] of rows) {
+      if (answer) qualification.push({ question, answer });
+    }
+  }
 
   /**
    * Currency is resolved primarily from the proxy header.
@@ -142,6 +186,15 @@ export async function POST(request: Request) {
     email: data.email.trim(),
     phone: data.phone?.trim() || "",
     zip: data.zip?.trim() || "",
+    address: data.address?.trim() || "",
+    city: data.city?.trim() || "",
+    state: data.state?.trim() || "",
+
+    consent: data.consent === true,
+
+    /** Structured copy of the same thing, for whatever reads this next. */
+    attribution,
+
     model: data.model.trim(),
 
     currency,

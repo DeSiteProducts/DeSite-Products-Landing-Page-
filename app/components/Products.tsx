@@ -1,3 +1,4 @@
+import { Fragment } from "react";
 import Image from "next/image";
 import { screeners } from "../data/products";
 import { CURRENCIES, formatPrice, type Currency } from "../lib/currency";
@@ -20,8 +21,12 @@ export default function Products({ currency }: { currency: Currency }) {
         <div className="mt-12 space-y-12 lg:space-y-16">
           {screeners.map((p, i) => {
             return (
+              // La línea va entre modelos, nunca antes del primero ni después
+              // del último: separa, no cierra la lista. Al ser hermana de la
+              // tarjeta, el `space-y` la deja centrada en el hueco.
+              <Fragment key={p.slug}>
+                {i > 0 && <div className="h-px bg-white/30" role="presentation" />}
               <article
-                key={p.slug}
                 className={`group relative grid overflow-hidden rounded-3xl border transition-all duration-300 md:grid-cols-[15rem_1fr] lg:grid-cols-[20rem_1fr_16rem] ${
                   p.featured
                     ? "border-brand/50 bg-white/[0.04] shadow-[0_24px_70px_-40px_var(--color-brand)]"
@@ -133,6 +138,7 @@ export default function Products({ currency }: { currency: Currency }) {
                 )}
 
               </article>
+              </Fragment>
             );
           })}
         </div>

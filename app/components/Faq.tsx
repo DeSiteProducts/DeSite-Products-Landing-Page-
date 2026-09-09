@@ -2,13 +2,12 @@
 
 import { useState } from "react";
 import SectionHeading from "./SectionHeading";
-import { type Currency } from "../lib/currency";
 import { faqs } from "../data/faqs";
 
 
-export default function Faq({ currency }: { currency: Currency }) {
+export default function Faq() {
   const [open, setOpen] = useState<number | null>(0);
-  const items = faqs(currency);
+  const items = faqs;
 
   return (
     <section id="faq" className="bg-white py-20 lg:py-28">
@@ -54,7 +53,11 @@ export default function Faq({ currency }: { currency: Currency }) {
                   hidden={!isOpen}
                   className="pb-7 pr-12 text-base leading-relaxed text-graphite/80 sm:text-base"
                 >
-                  {f.a}
+                  {f.a.map((paragraph, n) => (
+                    <p key={n} className={n > 0 ? "mt-4" : undefined}>
+                      {paragraph}
+                    </p>
+                  ))}
                 </div>
               </div>
             );

@@ -42,3 +42,11 @@ export function IconQuote({ className = "h-8 w-8" }: IconProps) {
     </svg>
   );
 }
+
+export function IconStar({ className = "h-4 w-4" }: IconProps) {
+  return (
+    <svg viewBox="0 0 24 24" className={className} fill="currentColor" aria-hidden="true">
+      <path d="m12 2 2.9 6.26 6.85.72-5.1 4.6 1.42 6.72L12 16.9l-6.07 3.4 1.42-6.72-5.1-4.6 6.85-.72L12 2Z" />
+    </svg>
+  );
+}

@@ -1,10 +1,11 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { questions, recommendModel } from "../data/qualify";
 import { screeners } from "../data/products";
 import { IconArrowRight, IconCheck, IconPhone } from "./Icons";
 import { CURRENCIES, type Currency } from "../lib/currency";
+import { captureAttribution, type Attribution } from "../lib/attribution";
 
 type Status = "idle" | "sending" | "sent" | "error";
 
@@ -14,11 +15,40 @@ const field =
   "w-full rounded-xl border border-white/15 bg-white/[0.04] px-4 py-3.5 text-base text-white placeholder:text-white/70 transition-colors focus:border-brand focus:bg-white/[0.07] focus:outline-none";
 const label = "mb-2 block text-sm font-bold uppercase tracking-wider text-white/70";
 
+/**
+ * US phone, shown as 1(800) 509 3915 while it is being typed.
+ *
+ * Only the ten digits are kept in state. A mask that stores the formatted
+ * string traps the caret: deleting the ")" leaves the digits untouched, the
+ * mask puts it straight back, and the field appears frozen.
+ */
+function formatUsPhone(digits: string): string {
+  if (!digits) return "";
+  const area = digits.slice(0, 3);
+  const mid = digits.slice(3, 6);
+  const last = digits.slice(6, 10);
+  let out = `1(${area}`;
+  if (digits.length >= 3) out += ")";
+  if (mid) out += ` ${mid}`;
+  if (last) out += ` ${last}`;
+  return out;
+}
+
 export default function QuoteForm({ currency }: { currency: Currency }) {
   const [step, setStep] = useState(0);
   const [answers, setAnswers] = useState<Record<string, string>>({});
   const [status, setStatus] = useState<Status>("idle");
   const [message, setMessage] = useState("");
+  // Guardamos solo los dígitos; lo que se ve es siempre derivado de ellos.
+  const [phoneDigits, setPhoneDigits] = useState("");
+  const [consent, setConsent] = useState(false);
+  const [attribution, setAttribution] = useState<Attribution | null>(null);
+
+  // On mount, not on submit: `document.referrer` is only there for the request
+  // that brought the visitor in, and a reload would already have lost it.
+  useEffect(() => {
+    setAttribution(captureAttribution());
+  }, []);
 
   const isContactStep = step === questions.length;
   const question = isContactStep ? null : questions[step];
@@ -38,11 +68,38 @@ export default function QuoteForm({ currency }: { currency: Currency }) {
 
   async function onSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
-    setStatus("sending");
     setMessage("");
 
     const form = e.currentTarget;
-    const contact = Object.fromEntries(new FormData(form).entries());
+    const contact = Object.fromEntries(new FormData(form).entries()) as Record<string, string>;
+
+    // El formulario lleva noValidate, así que la comprobación es nuestra.
+    const required: [string, string][] = [
+      ["name", "your full name"],
+      ["email", "your email"],
+      ["address", "your street address"],
+      ["city", "your city"],
+      ["state", "your state or province"],
+      ["zip", "your ZIP or postal code"],
+    ];
+    const missing = required.find(([key]) => !contact[key]?.trim());
+    if (missing) {
+      setStatus("error");
+      setMessage(`Please enter ${missing[1]}.`);
+      return;
+    }
+    if (phoneDigits.length !== 10) {
+      setStatus("error");
+      setMessage("Please enter a 10-digit phone number.");
+      return;
+    }
+    if (!consent) {
+      setStatus("error");
+      setMessage("Please tick the box to accept the Terms and Conditions and Privacy Policy.");
+      return;
+    }
+
+    setStatus("sending");
 
     try {
       const res = await fetch("/api/contact", {
@@ -50,6 +107,9 @@ export default function QuoteForm({ currency }: { currency: Currency }) {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           ...contact,
+          phone: formatUsPhone(phoneDigits),
+          consent: true,
+          attribution,
           model: model ? model.name : "To be recommended",
           // The currency they were shown, so the quote we send back matches
           // the sticker price they read.
@@ -207,41 +267,85 @@ export default function QuoteForm({ currency }: { currency: Currency }) {
                   <div className="mt-6 grid gap-5 sm:grid-cols-2">
                     <div>
                       <label className={label} htmlFor="name">
-                        Name *
+                        Full name *
                       </label>
-                      <input id="name" name="name" required className={field} placeholder="Dana Whitfield" />
-                    </div>
-                    <div>
-                      <label className={label} htmlFor="company">
-                        Company
-                      </label>
-                      <input id="company" name="company" className={field} placeholder="Valley Landscape Supply" />
-                    </div>
-                    <div>
-                      <label className={label} htmlFor="email">
-                        Email *
-                      </label>
-                      <input id="email" name="email" type="email" required className={field} placeholder="dana@company.com" />
+                      <input id="name" name="name" required autoComplete="name" className={field} placeholder="Dana Whitfield" />
                     </div>
                     <div>
                       <label className={label} htmlFor="phone">
-                        Phone
+                        Phone *
                       </label>
-                      <input id="phone" name="phone" type="tel" className={field} placeholder="+1 555 000 0000" />
+                      <input
+                        id="phone"
+                        name="phone"
+                        type="tel"
+                        inputMode="tel"
+                        required
+                        autoComplete="tel"
+                        className={field}
+                        placeholder="1(800) 509 3915"
+                        value={formatUsPhone(phoneDigits)}
+                        onChange={(e) => {
+                          const typed = e.target.value;
+                          let digits = typed.replace(/\D/g, "");
+                          if (digits.startsWith("1")) digits = digits.slice(1);
+                          // Borrar un carácter del formato debe llevarse el
+                          // dígito anterior, o el campo parece congelado.
+                          if (typed.length < formatUsPhone(phoneDigits).length && digits === phoneDigits) {
+                            digits = digits.slice(0, -1);
+                          }
+                          setPhoneDigits(digits.slice(0, 10));
+                        }}
+                      />
+                    </div>
+                    <div className="sm:col-span-2">
+                      <label className={label} htmlFor="email">
+                        Email *
+                      </label>
+                      <input id="email" name="email" type="email" required autoComplete="email" className={field} placeholder="dana@company.com" />
+                    </div>
+                    <div className="sm:col-span-2">
+                      <label className={label} htmlFor="address">
+                        Street address *
+                      </label>
+                      <input id="address" name="address" required autoComplete="street-address" className={field} placeholder="1490 FM Road" />
+                    </div>
+                    <div>
+                      <label className={label} htmlFor="city">
+                        City *
+                      </label>
+                      <input id="city" name="city" required autoComplete="address-level2" className={field} placeholder="Levelland" />
+                    </div>
+                    <div>
+                      <label className={label} htmlFor="state">
+                        State / Province *
+                      </label>
+                      <input id="state" name="state" required autoComplete="address-level1" className={field} placeholder="TX" />
                     </div>
                     <div>
                       <label className={label} htmlFor="zip">
-                        ZIP code *
+                        ZIP / Postal code *
                       </label>
-                      <input id="zip" name="zip" required className={field} placeholder="79336" />
-                    </div>
-                    <div>
-                      <label className={label} htmlFor="message">
-                        Anything else?
-                      </label>
-                      <input id="message" name="message" className={field} placeholder="Optional" />
+                      <input id="zip" name="zip" required autoComplete="postal-code" className={field} placeholder="79336" />
                     </div>
                   </div>
+
+                  <label className="mt-6 flex cursor-pointer gap-4 rounded-2xl border border-white/15 bg-white/[0.02] p-5">
+                    <input
+                      type="checkbox"
+                      name="consent"
+                      checked={consent}
+                      onChange={(e) => setConsent(e.target.checked)}
+                      className="mt-1 h-6 w-6 shrink-0 accent-[var(--color-brand)]"
+                    />
+                    <span className="text-base leading-relaxed text-white/70">
+                      Your information is safe with us, we do NEVER sell of share
+                      customer information, its use is exclusively to provide you with
+                      information about our products. By checking here you have accepted
+                      our Terms and Conditions and By continuing, you confirm that you
+                      have read and accepted our Privacy Policy.
+                    </span>
+                  </label>
 
                   {/* Honeypot anti-spam. */}
                   <div className="absolute left-[-9999px]" aria-hidden="true">

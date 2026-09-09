@@ -99,10 +99,10 @@ export default function StructuredData({ currency }: { currency: Currency }) {
   const faqPage = {
     "@type": "FAQPage",
     "@id": `${SITE_URL}/#faq`,
-    mainEntity: faqs(currency).map((f) => ({
+    mainEntity: faqs.map((f) => ({
       "@type": "Question",
       name: f.q,
-      acceptedAnswer: { "@type": "Answer", text: f.a },
+      acceptedAnswer: { "@type": "Answer", text: f.a.join("\n\n") },
     })),
   };
 

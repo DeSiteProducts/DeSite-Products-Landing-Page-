@@ -32,7 +32,7 @@ export default async function Home() {
       <TrustBar />
       <Videos />
       <Testimonials />
-      <Faq currency={currency} />
+      <Faq />
       <QuoteForm currency={currency} />
     </>
   );
