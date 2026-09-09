@@ -1,49 +1,35 @@
 import SectionHeading from "./SectionHeading";
 import { IconQuote } from "./Icons";
+import { reviews } from "../data/reviews";
 
 /**
- * PLACEHOLDER: replace with real, verifiable customer quotes before going live.
+ * Every review DeSite publishes, verbatim.
+ *
+ * Laid out in CSS columns rather than a grid: the quotes run from six words to
+ * ninety, and a grid would stretch every card in a row to match the longest one
+ * in it. Columns let each card end where its text ends.
  */
-const quotes = [
-  {
-    text: "We put the SLG 78 behind the skid steer and stopped hauling topsoil back to the yard to screen it. We saw the payback in the second season.",
-    role: "Plant manager",
-    context: "Landscape supply yard",
-  },
-  {
-    text: "The 56 goes on the trailer with the mini excavator and comes off in five minutes. That alone saved us an equipment rental on every project.",
-    role: "Operations manager",
-    context: "Excavation contractor",
-  },
-  {
-    text: "We run it hard on crushed concrete. Swapping the mesh takes one morning and there is no engine to service at the end of the season.",
-    role: "Yard supervisor",
-    context: "Concrete recycling yard",
-  },
-];
-
 export default function Testimonials() {
   return (
-    <section className="bg-ink py-20 lg:py-28">
+    <section id="reviews" className="bg-ink py-20 lg:py-28">
       <div className="mx-auto max-w-7xl px-5 lg:px-8">
         <SectionHeading
           eyebrow="Customers"
-          title={<>What The Crews Running Them Say</>}
+          title={<>What Our Customers Say</>}
         />
 
-        <div className="mt-14 grid gap-6 lg:grid-cols-3">
-          {quotes.map((q) => (
+        <div className="mt-14 gap-6 [column-fill:_balance] sm:columns-2 lg:columns-3">
+          {reviews.map((r, i) => (
             <figure
-              key={q.role}
-              className="flex h-full flex-col rounded-2xl border border-white/10 bg-gradient-to-b from-white/[0.06] to-transparent p-8"
+              key={`${r.name}-${i}`}
+              className="mb-6 break-inside-avoid rounded-2xl border border-white/10 bg-gradient-to-b from-white/[0.06] to-transparent p-7"
             >
-              <IconQuote className="h-8 w-8 text-brand/50" />
-              <blockquote className="mt-5 flex-1 text-base leading-relaxed text-white/80">
-                {q.text}
+              <IconQuote className="h-7 w-7 text-brand/50" />
+              <blockquote className="mt-4 text-lg leading-relaxed text-white/80">
+                {r.text}
               </blockquote>
-              <figcaption className="mt-7 border-t border-white/10 pt-5">
-                <p className="text-base font-bold text-white">{q.role}</p>
-                <p className="text-sm text-white/70">{q.context}</p>
+              <figcaption className="mt-6 border-t border-white/10 pt-4 text-base font-bold text-white">
+                {r.name}
               </figcaption>
             </figure>
           ))}

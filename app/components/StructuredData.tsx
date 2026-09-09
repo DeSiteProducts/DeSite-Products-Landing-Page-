@@ -1,5 +1,6 @@
 import { faqs } from "../data/faqs";
 import { comparisonRows, screeners } from "../data/products";
+import { reviews } from "../data/reviews";
 import { videos } from "../data/videos";
 import { absolute, PHONES, SITE_NAME, SITE_URL } from "../lib/site";
 import { CURRENCIES, type Currency } from "../lib/currency";
@@ -75,6 +76,19 @@ export default function StructuredData({ currency }: { currency: Currency }) {
         seller: { "@id": `${SITE_URL}/#organization` },
         priceValidUntil: `${new Date().getFullYear() + 1}-12-31`,
       },
+      /**
+       * Only the reviews where the customer names this machine themselves.
+       * No `reviewRating`: DeSite publishes these without stars, and inventing
+       * a score to win a star snippet is exactly what gets markup penalised.
+       */
+      review: reviews
+        .filter((r) => r.model === s.slug)
+        .map((r) => ({
+          "@type": "Review",
+          author: { "@type": "Person", name: r.name },
+          reviewBody: r.text,
+          itemReviewed: { "@id": `${SITE_URL}/#${s.slug}` },
+        })),
       warranty: {
         "@type": "WarrantyPromise",
         durationOfWarranty: { "@type": "QuantitativeValue", value: 5, unitCode: "ANN" },
