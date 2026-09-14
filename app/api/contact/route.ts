@@ -12,8 +12,7 @@ import {
 export const runtime = "nodejs";
 
 type Payload = {
-  name?: string;
-  company?: string;
+  name?: string
   email?: string;
   phone?: string;
 
@@ -186,7 +185,6 @@ export async function POST(request: Request) {
    */
   const lambdaPayload = {
     name: data.name.trim(),
-    company: data.company?.trim() || "",
     email: data.email.trim(),
     phone: data.phone?.trim() || "",
     zip: data.zip?.trim() || "",
