@@ -1,11 +1,14 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import { useRouter } from "next/navigation";
 import { questions, recommendModel } from "../data/qualify";
 import { screeners } from "../data/products";
-import { IconArrowRight, IconCheck, IconPhone } from "./Icons";
+import { IconArrowRight, IconPhone } from "./Icons";
 import { CURRENCIES, type Currency } from "../lib/currency";
 import { captureAttribution, type Attribution } from "../lib/attribution";
+import { hashForMeta, newEventId, saveLeadHandoff } from "../lib/metaPixel";
+import { buildLeadCustomData, normalizeUserData } from "../lib/metaLead";
 
 type Status = "idle" | "sending" | "sent" | "error";
 
@@ -43,6 +46,7 @@ export default function QuoteForm({ currency }: { currency: Currency }) {
   const [phoneDigits, setPhoneDigits] = useState("");
   const [consent, setConsent] = useState(false);
   const [attribution, setAttribution] = useState<Attribution | null>(null);
+  const router = useRouter();
 
   // On mount, not on submit: `document.referrer` is only there for the request
   // that brought the visitor in, and a reload would already have lost it.
@@ -101,6 +105,10 @@ export default function QuoteForm({ currency }: { currency: Currency }) {
 
     setStatus("sending");
 
+    // One id for this lead, shared by the browser Pixel and the server-side
+    // Conversions API send, so Meta counts it once.
+    const metaEventId = newEventId();
+
     try {
       const res = await fetch("/api/contact", {
         method: "POST",
@@ -110,6 +118,7 @@ export default function QuoteForm({ currency }: { currency: Currency }) {
           phone: formatUsPhone(phoneDigits),
           consent: true,
           attribution,
+          metaEventId,
           model: model ? model.name : "To be recommended",
           // The currency they were shown, so the quote we send back matches
           // the sticker price they read.
@@ -124,7 +133,42 @@ export default function QuoteForm({ currency }: { currency: Currency }) {
         setMessage(body.error || "We could not send your request.");
         return;
       }
+      // The Lead event is sent by /thank-you against this one-time handoff,
+      // so a refresh or a direct visit to that page never counts as a lead.
+      // Contact details go into it only as SHA-256 hashes: nothing readable is
+      // kept in the browser or handed to the Pixel.
+      let userData: Awaited<ReturnType<typeof hashForMeta>> = {};
+      try {
+        userData = await hashForMeta(
+          normalizeUserData({
+            name: contact.name,
+            email: contact.email,
+            phone: formatUsPhone(phoneDigits),
+            city: contact.city,
+            state: contact.state,
+            zip: contact.zip,
+            country: typeof body.country === "string" ? body.country : "",
+          })
+        );
+      } catch {
+        // Hashing unavailable: the Lead still goes out, just unmatched.
+      }
+      saveLeadHandoff({
+        eventId: metaEventId,
+        model: model?.slug ?? null,
+        source: attribution?.source ?? null,
+        channel: attribution?.channel ?? null,
+        currency,
+        userData,
+        customData: buildLeadCustomData({
+          modelName: model?.name ?? null,
+          answers,
+          attribution,
+          currency,
+        }),
+      });
       setStatus("sent");
+      router.push("/thank-you");
     } catch {
       setStatus("error");
       setMessage("No connection to the server. Please try again.");
@@ -141,21 +185,6 @@ export default function QuoteForm({ currency }: { currency: Currency }) {
 
       <div className="relative mx-auto max-w-3xl px-5 lg:px-8">
         <div className="rounded-3xl border border-white/10 bg-white/[0.03] p-6 backdrop-blur-sm sm:p-9">
-          {status === "sent" ? (
-            <div className="flex h-full min-h-96 flex-col items-center justify-center text-center">
-              <span className="inline-flex h-16 w-16 items-center justify-center rounded-full bg-brand text-navy">
-                <IconCheck className="h-8 w-8" />
-              </span>
-              <h3 className="mt-6 font-display text-3xl font-extrabold text-white">
-                Got It
-              </h3>
-              <p className="mt-3 max-w-sm text-base text-white/65">
-                {model
-                  ? `Your answers point to the ${model.name}. We will confirm it and come back with the mesh opening and a delivered price within one business day.`
-                  : "We will look at your answers and come back with a model, the mesh opening and a delivered price within one business day."}
-              </p>
-            </div>
-          ) : (
             <>
               {/* Progreso */}
               <div className="flex items-center justify-between gap-4">
@@ -369,11 +398,11 @@ export default function QuoteForm({ currency }: { currency: Currency }) {
                     </button>
                     <button
                       type="submit"
-                      disabled={status === "sending"}
+                      disabled={status === "sending" || status === "sent"}
                       className="group inline-flex flex-1 items-center justify-center gap-2 rounded-full bg-brand px-7 py-4 text-base font-bold text-navy transition-all hover:bg-brand-300 disabled:cursor-not-allowed disabled:opacity-60"
                     >
-                      {status === "sending" ? "Sending…" : "Send My Answers"}
-                      {status !== "sending" && (
+                      {status === "sending" || status === "sent" ? "Sending…" : "Send My Answers"}
+                      {status !== "sending" && status !== "sent" && (
                         <IconArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-1" />
                       )}
                     </button>
@@ -386,7 +415,6 @@ export default function QuoteForm({ currency }: { currency: Currency }) {
                 </form>
               )}
             </>
-          )}
         </div>
 
         <div className="mt-10 border-t border-white/10 pt-8 text-center">

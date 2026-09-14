@@ -1,4 +1,5 @@
-import { NextResponse } from "next/server";
+import { NextResponse, after } from "next/server";
+import { sendMetaLead } from "../../lib/metaCapi.server";
 import type { Attribution } from "../../lib/attribution";
 
 import {
@@ -38,6 +39,9 @@ type Payload = {
 
   /** Qualification answers, keyed by question id. */
   answers?: Record<string, string>;
+
+  /** Shared with the browser Pixel Lead as event_id, so Meta counts it once. */
+  metaEventId?: string;
 
   /** Anti-spam honeypot: must arrive empty. */
   website?: string;
@@ -247,10 +251,47 @@ export async function POST(request: Request) {
 
     /**
      * Success.
+     *
+     * The Meta Conversions API send runs after the response has gone out, so
+     * the visitor never waits on Meta and a Meta outage cannot fail a lead
+     * that has already reached the inbox. Request details are read now; the
+     * request itself is finished by the time `after` runs.
      */
+    const requestInfo = {
+      ip:
+        (request.headers.get("x-forwarded-for") ?? "").split(",")[0].trim() ||
+        request.headers.get("x-real-ip"),
+      userAgent: request.headers.get("user-agent"),
+      cookie: request.headers.get("cookie"),
+      pageUrl: request.headers.get("referer"),
+    };
+
+    after(() =>
+      sendMetaLead({
+        eventId: data.metaEventId,
+        contact: {
+          name: data.name,
+          email: data.email,
+          phone: data.phone,
+          city: data.city,
+          state: data.state,
+          zip: data.zip,
+          country,
+        },
+        modelName: data.model,
+        answers: data.answers,
+        attribution,
+        currency,
+        requestInfo,
+      })
+    );
+
     return NextResponse.json({
       ok: true,
       delivered: true,
+      // The browser has no other way to learn the country, and Advanced
+      // Matching on the Pixel side wants it too.
+      country: country.toLowerCase(),
     });
 
   } catch (error) {

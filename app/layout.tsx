@@ -5,6 +5,7 @@ import { screeners } from "./data/products";
 import { SITE_NAME, SITE_URL } from "./lib/site";
 import "./globals.css";
 import Script from "next/script";
+import MetaPixel from "./components/MetaPixel";
 
 const title = "Grizzly Screeners for Topsoil & Rock | DeSite Products";
 const description =
@@ -169,6 +170,8 @@ export default function RootLayout({
             })(window, document, "clarity", "script", "yf9wk0mou1");
           `}
         </Script>
+        {/* Meta Pixel */}
+        <MetaPixel />
         <Header />
         <main id="main">{children}</main>
         <Footer />
