@@ -1,4 +1,4 @@
-/** Early Black Friday discount, applied to the original list price. */
+/** Round discounted prices to the nearest hundred; preserve explicit offers. */
 export function salePrice(originalPrice: number, override?: number): number {
-  return override ?? Math.round(originalPrice * 90) / 100;
+  return override ?? Math.round((originalPrice * 0.9) / 100) * 100;
 }
