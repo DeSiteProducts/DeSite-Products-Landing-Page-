@@ -1,7 +1,8 @@
 import { Fragment } from "react";
 import Image from "next/image";
 import { screeners } from "../data/products";
-import { CURRENCIES, formatPrice, type Currency } from "../lib/currency";
+import type { Currency } from "../lib/currency";
+import MachinePrice from "./MachinePrice";
 import EquipmentRow from "./EquipmentRow";
 import { compactEquipment, fullSizeEquipment, miniEquipment } from "../data/equipment";
 import { IconArrowRight } from "./Icons";
@@ -88,15 +89,7 @@ export default function Products({ currency }: { currency: Currency }) {
 
                 {/* Precio y acción */}
                 <div className="flex flex-col justify-center gap-5 border-t border-white/10 bg-navy-950/40 p-6 md:col-start-2 lg:col-start-3 lg:border-l lg:border-t-0 lg:p-8">
-                  <div>
-                    <p className="text-xs uppercase tracking-[0.18em] text-white/70">Price</p>
-                    <p className="mt-1 font-display text-4xl font-extrabold leading-none text-white">
-                      {formatPrice(p.prices[currency], currency)}
-                      <span className="ml-2 text-base font-bold text-white/70">
-                        {CURRENCIES[currency].label}
-                      </span>
-                    </p>
-                  </div>
+                  <MachinePrice originalPrice={p.prices[currency]} currency={currency} offerPrice={p.salePrices?.[currency]} />
 
                   <a
                     href="#quote"
@@ -107,10 +100,10 @@ export default function Products({ currency }: { currency: Currency }) {
                     }`}
                   >
                     <span className="whitespace-nowrap font-display text-base font-extrabold leading-tight">
-                      Save 50% On Freight
+                      Get Early
                     </span>
                     <span className="mt-0.5 inline-flex items-center gap-1.5 text-base font-bold opacity-80">
-                      Get A Code
+                      Black Friday
                       <IconArrowRight className="h-4 w-4 transition-transform group-hover/cta:translate-x-1" />
                     </span>
                   </a>

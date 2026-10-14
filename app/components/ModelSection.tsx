@@ -1,6 +1,7 @@
 import Image from "next/image";
 import { comparisonRows, screeners, type Screener } from "../data/products";
-import { CURRENCIES, formatPrice, type Currency } from "../lib/currency";
+import type { Currency } from "../lib/currency";
+import MachinePrice from "./MachinePrice";
 import { videos } from "../data/videos";
 import VideoCard from "./VideoCard";
 import SpecValue from "./SpecValue";
@@ -67,13 +68,7 @@ export default function ModelSection({
             </dl>
 
             <div className="mt-10 border-t border-white/10 pt-8">
-              <p className="text-xs uppercase tracking-[0.18em] text-white/70">Price</p>
-              <p className="mt-1 font-display text-4xl font-extrabold leading-none text-white">
-                {formatPrice(model.prices[currency], currency)}
-                <span className="ml-2 align-middle text-base font-bold text-white/70">
-                  {CURRENCIES[currency].label}
-                </span>
-              </p>
+              <MachinePrice originalPrice={model.prices[currency]} currency={currency} offerPrice={model.salePrices?.[currency]} />
             </div>
 
             <div className="mt-8 flex flex-col gap-3 sm:flex-row">
@@ -81,7 +76,7 @@ export default function ModelSection({
                 href="#quote"
                 className="group inline-flex items-center justify-center gap-2 rounded-full bg-brand px-7 py-4 text-base font-bold text-navy transition-all hover:bg-brand-300"
               >
-                Get A Delivered Quote
+                Get Early Black Friday
                 <IconArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-1" />
               </a>
               <a

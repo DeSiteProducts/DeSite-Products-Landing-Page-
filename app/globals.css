@@ -40,12 +40,13 @@
        Todas las utilidades de Tailwind son rem, así que escala el sitio entero. */
     font-size: 118.75%;
     scroll-behavior: smooth;
-    scroll-padding-top: 5.5rem;
+    scroll-padding-top: calc(5.5rem + 80px);
     -webkit-text-size-adjust: 100%;
   }
 
   body {
     margin: 0;
+    padding-top: 80px;
     background-color: var(--color-ink);
     color: var(--color-white);
     font-family: var(--font-sans);
@@ -65,6 +66,76 @@
 }
 
 @layer components {
+  .sale-banner {
+    height: 80px;
+    color: #fff;
+    background: linear-gradient(110deg, #86152b, #b51e36 58%, #94182f);
+    border-bottom: 1px solid rgb(255 255 255 / 18%);
+  }
+
+  .sale-banner-inner {
+    height: 100%;
+    max-width: 80rem;
+    margin-inline: auto;
+    padding-inline: 1.25rem;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+  }
+
+  .sale-banner-title {
+    font-family: var(--font-display);
+    font-size: clamp(14px, 2.4vw, 24px);
+    font-weight: 800;
+    line-height: 1.2;
+    text-wrap: balance;
+  }
+
+  .sale-countdown { display: flex; gap: 14px; flex-shrink: 0; }
+  .sale-countdown-dot {
+    width: 9px;
+    height: 9px;
+    flex-shrink: 0;
+    margin-top: 17px;
+    border-radius: 50%;
+    background: #fff;
+    box-shadow: 0 0 9px rgb(255 255 255 / 55%);
+    animation: sale-pulse 1.4s ease-in-out infinite;
+  }
+  .sale-countdown-unit { position: relative; text-align: center; }
+  .sale-countdown-number {
+    display: grid;
+    place-items: center;
+    width: 56px;
+    height: 44px;
+    overflow: hidden;
+    border: 1px solid rgb(255 255 255 / 22%);
+    border-radius: 7px;
+    background: rgb(45 3 15 / 25%);
+    box-shadow: inset 0 1px 0 rgb(255 255 255 / 10%);
+    font-size: 30px;
+    line-height: 1;
+    font-weight: 800;
+    font-variant-numeric: tabular-nums;
+  }
+  .sale-countdown-digit { animation: sale-tick 350ms ease-out both; }
+  .sale-countdown-label {
+    display: block;
+    margin-top: 3px;
+    font-size: 12px;
+    font-weight: 600;
+    letter-spacing: .06em;
+    text-transform: uppercase;
+  }
+  .sale-countdown-colon {
+    position: absolute;
+    top: 4px;
+    left: -10px;
+    font-size: 22px;
+    animation: sale-pulse 2s ease-in-out infinite;
+  }
+
   /* Technical grid backdrop for dark sections */
   .grid-tech {
     background-image:
@@ -80,6 +151,41 @@
       transparent 2px 9px
     );
   }
+}
+
+@keyframes sale-tick {
+  from { opacity: 0; transform: translateY(-65%); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes sale-pulse {
+  50% { opacity: .4; }
+}
+
+@media (max-width: 767px) {
+  .sale-banner-title { font-size: 18px; line-height: 1.15; }
+}
+
+@media (max-width: 480px) {
+  .sale-banner-inner { padding-inline: 12px; }
+  .sale-countdown { gap: 10px; }
+  .sale-countdown-dot { margin-top: 15px; }
+  .sale-countdown-number { width: 44px; height: 40px; font-size: 26px; }
+  .sale-countdown-label { font-size: 10px; }
+  .sale-countdown-colon { left: -8px; font-size: 18px; }
+}
+
+@media (min-width: 1024px) {
+  .sale-banner-inner { padding-inline: 2rem; }
+}
+
+@media (max-width: 380px) {
+  .sale-banner-inner { gap: 8px; }
+  .sale-countdown { gap: 6px; }
+  .sale-countdown-dot { width: 7px; height: 7px; margin-top: 16px; }
+  .sale-countdown-number { width: 36px; }
+  .sale-countdown-label { font-size: 8px; letter-spacing: .02em; }
+  .sale-countdown-colon { left: -5px; }
 }
 
 @media (prefers-reduced-motion: reduce) {

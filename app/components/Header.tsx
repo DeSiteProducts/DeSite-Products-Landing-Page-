@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from "react";
 import Logo from "./Logo";
+import SaleBanner from "./SaleBanner";
 import { IconPhone } from "./Icons";
 
 const links = [
@@ -36,6 +37,7 @@ export default function Header() {
           : "border-b border-transparent"
       }`}
     >
+      <SaleBanner />
       <div className="mx-auto flex h-20 max-w-7xl items-center justify-between px-5 lg:px-8">
         <a href="/" aria-label="DeSite — home">
           <Logo />

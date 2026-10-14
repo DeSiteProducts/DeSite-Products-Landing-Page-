@@ -4,6 +4,7 @@ import { reviews } from "../data/reviews";
 import { videos } from "../data/videos";
 import { absolute, PHONES, SITE_NAME, SITE_URL } from "../lib/site";
 import { CURRENCIES, type Currency } from "../lib/currency";
+import { salePrice } from "../lib/pricing";
 
 /**
  * JSON-LD for the whole page.
@@ -69,12 +70,12 @@ export default function StructuredData({ currency }: { currency: Currency }) {
         "@type": "Offer",
         url: `${SITE_URL}/#${s.slug}`,
         // The currency here is the one the visitor is actually being shown.
-        price: s.prices[currency],
+        price: salePrice(s.prices[currency], s.salePrices?.[currency]),
         priceCurrency: CURRENCIES[currency].code,
         availability: "https://schema.org/InStock",
         itemCondition: "https://schema.org/NewCondition",
         seller: { "@id": `${SITE_URL}/#organization` },
-        priceValidUntil: `${new Date().getFullYear() + 1}-12-31`,
+        priceValidUntil: "2026-11-30",
       },
       /**
        * Only the reviews where the customer names this machine themselves.
