@@ -2,17 +2,23 @@
 
 import { useEffect, useState } from "react";
 
-// End of November 30, 2026 in Costa Rica (UTC-06:00).
-const SALE_END = Date.parse("2026-12-01T00:00:00-06:00");
-
 export default function SaleBanner() {
   const [remaining, setRemaining] = useState<number | null>(null);
 
   useEffect(() => {
-    const update = () => setRemaining(Math.max(0, SALE_END - Date.now()));
+    const update = () => {
+      // Construct in the browser's local timezone: November 30 stays included
+      // everywhere, with the countdown ending as December 1 begins.
+      const saleEnd = new Date(2026, 11, 1).getTime();
+      setRemaining(Math.max(0, saleEnd - Date.now()));
+    };
     update();
     const interval = window.setInterval(update, 1000);
-    return () => window.clearInterval(interval);
+    document.addEventListener("visibilitychange", update);
+    return () => {
+      window.clearInterval(interval);
+      document.removeEventListener("visibilitychange", update);
+    };
   }, []);
 
   const seconds = remaining === null ? null : Math.ceil(remaining / 1000);
@@ -31,7 +37,7 @@ export default function SaleBanner() {
           role="timer"
           aria-live="off"
           aria-label={seconds === null ? "Loading countdown" : `${units[0].value} days, ${units[1].value} hours, ${units[2].value} minutes, ${units[3].value} seconds remaining`}
-          title="Ends November 30, 2026 at midnight, Costa Rica time (UTC−6)"
+          title="Ends at the end of November 30, 2026, in your local time zone"
         >
           <span className="sale-countdown-dot" aria-hidden="true" />
           {units.map(({ label, value }, index) => (
