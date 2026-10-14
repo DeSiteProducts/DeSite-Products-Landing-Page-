@@ -26,9 +26,6 @@ export default function SaleBanner() {
   return (
     <section className="sale-banner" aria-label="Early Black Friday Sale">
       <div className="sale-banner-inner">
-        <p className="sale-banner-title">
-          {remaining === 0 ? "Black Friday Sale Ended" : "Early Black Friday Sale"}
-        </p>
         <div
           className="sale-countdown"
           role="timer"
@@ -40,7 +37,7 @@ export default function SaleBanner() {
           {units.map(({ label, value }, index) => (
             <div className="sale-countdown-unit" key={label}>
               {index > 0 && <span className="sale-countdown-colon" aria-hidden="true">:</span>}
-              <span className="sale-countdown-number" aria-hidden="true">
+              <span className="sale-countdown-number sale-countdown-number-red" aria-hidden="true">
                 <span key={value} className="sale-countdown-digit">
                   {value === null ? "--" : String(value).padStart(2, "0")}
                 </span>
@@ -49,6 +46,9 @@ export default function SaleBanner() {
             </div>
           ))}
         </div>
+        <p className="sale-banner-title">
+          {remaining === 0 ? "Black Friday Sale Ended" : "Early Black Friday Sale"}
+        </p>
       </div>
     </section>
   );
